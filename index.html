@@ -539,7 +539,12 @@ a{color:inherit}
   function renderQuotes(data,buy){
     quotes=data.quotes||[];
     els.baselinePanel.className="baseline-panel";
-    els.baselineText.textContent=data.baseline?.available?"UNISWAP QUOTE READY":"UNISWAP API NOT ACTIVE";
+    if(data.baseline?.available){
+      els.baselineText.textContent="UNISWAP QUOTE READY";
+    }else{
+      const ue=(data.errors||[]).find(x=>String(x.provider||"").toUpperCase().includes("UNISWAP"));
+      els.baselineText.textContent=ue ? `UNISWAP QUOTE FAILED // ${ue.error}` : "UNISWAP BASELINE UNAVAILABLE";
+    }
 
     if(!quotes.length){
       els.quotePanel.innerHTML=`<div class="empty">NO EXECUTABLE ROUTE FOUND.<br>${escapeHtml((data.errors||[]).map(x=>x.provider+": "+x.error).join(" // "))}</div>`;

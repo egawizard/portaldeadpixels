@@ -19,7 +19,7 @@ const UNISWAP_SWAP_ROUTER_02 = "0xcaf681a66d020601342297493863e78c959e5cb2";
 const RPC = process.env.RH_RPC_URL || "https://rpc.mainnet.chain.robinhood.com/";
 const UNISWAP_TRADE_API = "https://trade-api.gateway.uniswap.org/v1";
 const UNISWAP_NATIVE = "0x0000000000000000000000000000000000000000";
-const UNISWAP_ROUTER_VERSION = "2.0";
+const UNISWAP_ROUTER_VERSION = "2.1.1";
 const FEES = [100, 500, 3000, 10000];
 
 const quoterAbi = parseAbi([

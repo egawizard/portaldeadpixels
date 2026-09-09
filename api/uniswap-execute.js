@@ -16,7 +16,7 @@ function headers(){
     "x-api-key":key,
     "content-type":"application/json",
     "accept":"application/json",
-    "x-universal-router-version":"2.0",
+    "x-universal-router-version":"2.1.1",
     "x-erc20eth-enabled":"false"
   };
 }

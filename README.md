@@ -1,4 +1,4 @@
-# GLITCH ROUTER V2 — UNISWAP BASELINE ENGINE
+# GLITCH ROUTER V2.1 — ROBINHOOD UNISWAP FIX
 
 **UNISWAP IS THE BASELINE. WE SEARCH FOR BETTER.**
 
@@ -153,3 +153,16 @@ deviates when another provider offers a better net result.
   returned;
 - Nordstern and LI.FI retain their existing direct execution flows;
 - start with tiny live swaps after every deployment change.
+
+
+## V2.1 Robinhood fix
+
+Robinhood Chain (4663) deploys Universal Router **2.1.1** at
+`0x8876789976decbfcbbbe364623c63652db8c0904`.
+
+V2 incorrectly forced `x-universal-router-version: 2.0`.
+The Uniswap API rejects that version on Robinhood Chain, so the portal could
+show `UNISWAP API NOT ACTIVE` even though the API key itself was present.
+
+V2.1 explicitly uses `2.1.1` for `/quote` and execution requests and makes the
+health endpoint verify actual Uniswap API connectivity.
