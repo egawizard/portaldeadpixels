@@ -20,7 +20,7 @@ module.exports=async function handler(req,res){
 
   res.status(200).json({
     ok:true,
-    app:"DEAD PIXELS PORTAL V3.5.1 // UNIFIED EXECUTION OS // VERCEL SAFE",
+    app:"DEAD PIXELS PORTAL V3.5.2 // UNIFIED EXECUTION OS // LARGE MENU",
     chainId:4663,
     protocolFeeBps:0,
     holderGate:{enabled:true,minimumNFTs:1,nftContract:"0x27390fe7ae676fbfdb632e61cd4019996b07892c",enforcement:"SERVER_SIDE_EXECUTABLE_QUOTE_GATE"},
