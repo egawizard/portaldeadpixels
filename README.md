@@ -1,118 +1,224 @@
-# GLITCH ROUTER V2 — MICRO GAS ENGINE
+# GLITCH ROUTER V3.1 — FULL RANGE DIRECT POOL ENGINE
 
-This build keeps the DEAD PIXELS holder gate and adds two extra gas-minimizing
-Uniswap execution paths for native ETH input trades.
+This version does **not** restrict gas optimization to small trades.
 
-## Why V2 exists
+The custom `GLITCH DIRECT POOL` route competes on **every trade size** whenever
+a canonical Uniswap V3 single-hop or WETH/USDG two-hop route exists.
 
-In live comparison screenshots, the official Uniswap app sent an ETH → NVDA
-transaction to Robinhood Chain's official **Universal Router**:
-
-`0x8876789976decbfcbbbe364623c63652db8c0904`
-
-GLITCH ROUTER V1 was sending its direct V3 execution to **SwapRouter02**:
-
-`0xcaf681a66d020601342297493863e78c959e5cb2`
-
-Those are different execution contracts. V2 now simulates both styles instead
-of assuming SwapRouter02 is always the cheapest execution.
-
-## V2 routing stack
-
-Special case:
+## Architecture
 
 ```text
-ETH ↔ WETH
-→ WETH deposit()/withdraw() directly
-```
-
-For native ETH input trades:
-
-```text
-UNISWAP UNIVERSAL ROUTER // V3 micro-route
+ANY TRADE SIZE
+      ↓
+FULL RANGE ENGINE
+      ↓
+DIRECT WRAP                ETH ↔ WETH
+GLITCH DIRECT POOL         custom holder-gated executor
+UNISWAP UNIVERSAL
 UNISWAP V2 DIRECT
+UNISWAP V3 DIRECT
 NORDSTERN DIRECT
-UNISWAP V3 / SwapRouter02
 LI.FI
-        ↓
-SIMULATE GAS + OUTPUT
-        ↓
+      ↓
+SIMULATE OUTPUT + GAS
+      ↓
 BEST NET OUTPUT
 ```
 
-For ERC-20 input trades, V1 routes remain active. Universal Router native mode
-is intentionally limited to ETH input because ERC-20 Universal Router flows
-normally introduce Permit2 approval/signature semantics; adding that blindly
-would defeat the gas-minimization goal.
+There is no hardcoded `$50`, `$300`, or whale threshold. The engine lets the
+actual quote and gas simulation decide.
 
-## Additional gas optimization
+## Why a custom executor can be cheaper
 
-Robinhood Chain uses first-come, first-served sequencing: paying a higher
-priority fee cannot jump ahead in the queue.
+The generic routers must support many execution modes.
 
-For GLITCH ROUTER's own constructed transactions, V2 uses the RPC's current
-accepted gas price plus a 1% safety cushion. This avoids intentionally bidding
-an oversized priority margin. Provider-built transactions from LI.FI/Nordstern
-keep their provider-supplied fee fields.
-
-This does NOT guarantee a lower final network fee. The chain base fee, L1 data
-cost, calldata size, route state and wallet behavior can change.
-
-## Official Uniswap Robinhood Chain addresses used
+`GlitchDirectExecutor` is intentionally narrow:
 
 ```text
-Universal Router
-0x8876789976decbfcbbbe364623c63652db8c0904
+wallet
+  ↓
+GlitchDirectExecutor
+  ↓
+canonical Uniswap V3 pool
+```
 
-V3 SwapRouter02
+It supports only:
+
+- exact-input single-pool V3 swap
+- exact-input two-pool V3 swap
+- native ETH wrap/unwrap when needed
+- DEAD PIXELS holder check
+- minimum-output protection
+
+It has:
+
+- no owner
+- no admin
+- no protocol fee
+- no storage-based custody
+- no generic command parser
+- no arbitrary external calls
+
+The route is only selected when its estimated **net result** actually beats the
+other candidates.
+
+## Holder restriction
+
+Contract:
+`0x27390fe7ae676fbfdb632e61cd4019996b07892c`
+
+Minimum:
+`1 DEAD PIXEL`
+
+The portal still checks holder status server-side.
+
+The custom executor also performs its own onchain `balanceOf(msg.sender)` check,
+so non-holders cannot use the custom executor directly.
+
+## Official Robinhood Chain Uniswap V3 addresses
+
+```text
+Factory
+0x1f7d7550b1b028f7571e69a784071f0205fd2efa
+
+QuoterV2
+0x33e885ed0ec9bf04ecfb19341582aadcb4c8a9e7
+
+SwapRouter02
 0xcaf681a66d020601342297493863e78c959e5cb2
 
-V2 Router02
-0x89e5db8b5aa49aa85ac63f691524311aeb649eba
-
-V3 Quoter
-0x33e885ed0ec9bf04ecfb19341582aadcb4c8a9e7
+Universal Router
+0x8876789976decbfcbbbe364623c63652db8c0904
 
 WETH
 0x0Bd7D308f8E1639FAb988df18A8011f41EAcAD73
 ```
 
-## Holder gate
+## Deploy the custom executor
 
-Unchanged:
+The source is:
 
-- minimum 1 DEAD PIXELS NFT
-- UI locked for non-holders
-- `/api/quote` independently checks `balanceOf(taker)` before returning an
-  executable transaction.
+```text
+contracts/GlitchDirectExecutor.sol
+```
 
-## Test target
+A Hardhat deployment package is included under:
 
-The first regression test should be:
+```text
+deployment/
+```
+
+On your Windows PC:
+
+```text
+cd deployment
+npm install
+copy .env.example .env
+```
+
+Edit `.env` locally:
+
+```text
+RH_RPC_URL=https://rpc.mainnet.chain.robinhood.com/
+PRIVATE_KEY=YOUR_DEPLOYER_PRIVATE_KEY
+```
+
+Do not put that private key into ChatGPT, Vercel frontend code, GitHub, or a
+public file.
+
+Then:
+
+```text
+npm run compile
+npm run deploy:mainnet
+```
+
+The deployment script prints:
+
+```text
+GLITCH DIRECT EXECUTOR DEPLOYED
+Address: 0x...
+```
+
+Copy only the **public contract address**.
+
+In Vercel add:
+
+```text
+GLITCH_EXECUTOR_ADDRESS=0x...
+```
+
+Redeploy the portal.
+
+Then `/api/health` should show:
+
+```text
+directPoolEngine.configured = true
+providers.glitchDirectPool = true
+```
+
+## First test
+
+Do not start with meaningful capital.
+
+Test the same route that exposed the previous gap:
 
 ```text
 0.001 ETH → NVDA
 ```
 
-Compare the wallet confirmation fee against the official Uniswap app at nearly
-the same time.
-
-V2 should show extra candidates such as:
+The page should be able to show candidates including:
 
 ```text
+GLITCH DIRECT POOL
 UNISWAP UNIVERSAL
-UNISWAP V2 DIRECT
 NORDSTERN DIRECT
 UNISWAP DIRECT
 LI.FI
 ```
 
-Only the best net candidate is selected by default.
+Then compare the **actual OKX wallet confirmation network fee**, not only the
+frontend estimate.
 
-## Important
+## ERC-20 input
 
-No route can be guaranteed to always beat Uniswap's own app. Uniswap can use
-V2, V3, V4, Universal Router and UniswapX depending on current market state.
-V2 closes one concrete gap observed in the live screenshots: our previous
-failure to simulate the official Universal Router execution family for native
-ETH trades.
+For an ERC-20 sell, `GLITCH DIRECT POOL` requires allowance to the custom
+executor.
+
+The portal keeps the existing exact-to-trade approval behavior. It does not
+request unlimited allowance.
+
+Approval gas is included in route ranking when a new approval is required.
+
+## Security note
+
+This is a new custom execution contract. The source is deliberately small, but
+small does not mean audited.
+
+Before routing serious volume:
+
+1. compile and inspect the bytecode/source;
+2. deploy;
+3. verify it on Blockscout;
+4. run tiny live swaps for ETH → token, token → ETH, token → token and two-hop;
+5. get an independent Solidity review/audit.
+
+If the custom route is not cheaper, the engine simply lets another provider win.
+
+
+## Remix compile fix
+
+V3.1 refactors the internal V3 swap call into a `SwapRequest` memory struct.
+This removes the previous `Stack too deep` compiler failure in Remix's legacy
+code generator.
+
+Recommended Remix settings:
+
+```text
+Compiler: 0.8.24
+Optimization: ON
+Runs: 1,000,000
+viaIR: not required
+```
+
+If `Use configuration file` is enabled, use the included `remix.config.json`.

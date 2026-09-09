@@ -159,7 +159,7 @@ a{color:inherit}
 
   <section class="swap-shell">
     <div class="windowbar">
-      <span>GLITCH_SWAP.EXE // V2</span>
+      <span>GLITCH_SWAP.EXE // V3</span>
       <span class="dots"><i></i><i></i><i></i></span>
     </div>
     <div class="swap">
@@ -229,7 +229,7 @@ a{color:inherit}
 
       <div class="details">
         <div><small>PROTOCOL FEE</small><b>0.00%</b></div>
-        <div><small>ROUTING</small><b id="routingLabel">MICRO GAS ENGINE</b></div>
+        <div><small>ROUTING</small><b id="routingLabel">FULL RANGE ENGINE</b></div>
         <div><small>EXECUTION</small><b>YOUR WALLET</b></div>
       </div>
     </div>
@@ -552,7 +552,7 @@ a{color:inherit}
     if(!account || !holderState.eligible || !els.sellAmount.value || Number(els.sellAmount.value)<=0){updateAction();return;}
     try{
       setStatus("SCANNING ROUTES // REQUESTING EXECUTABLE QUOTES...");
-      els.quotePanel.innerHTML='<div class="empty">SCANNING MICRO GAS ENGINE...</div>';
+      els.quotePanel.innerHTML='<div class="empty">SCANNING FULL RANGE ENGINE...</div>';
       const {data,buy}=await fetchQuotes("all");
       renderQuotes(data,buy);
       const enabled=(data.providers||[]).filter(x=>x.enabled).map(x=>x.name).join(" + ");

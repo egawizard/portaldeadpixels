@@ -16,6 +16,8 @@ const WETH = "0x0Bd7D308f8E1639FAb988df18A8011f41EAcAD73";
 const USDG = "0x5fc5360D0400a0Fd4f2af552ADD042D716F1d168";
 
 const UNISWAP_V3_QUOTER = "0x33e885ed0ec9bf04ecfb19341582aadcb4c8a9e7";
+const UNISWAP_V3_FACTORY = "0x1f7d7550b1b028f7571e69a784071f0205fd2efa";
+const GLITCH_EXECUTOR = String(process.env.GLITCH_EXECUTOR_ADDRESS || "");
 const UNISWAP_SWAP_ROUTER_02 = "0xcaf681a66d020601342297493863e78c959e5cb2";
 const UNISWAP_UNIVERSAL_ROUTER = "0x8876789976decbfcbbbe364623c63652db8c0904";
 const UNISWAP_V2_ROUTER_02 = "0x89e5db8b5aa49aa85ac63f691524311aeb649eba";
@@ -42,6 +44,15 @@ const universalExecuteAbi = parseAbi([
 const v2RouterAbi = parseAbi([
   "function getAmountsOut(uint256 amountIn,address[] path) view returns (uint256[] amounts)",
   "function swapExactETHForTokens(uint256 amountOutMin,address[] path,address to,uint256 deadline) payable returns (uint256[] amounts)"
+]);
+
+const factoryAbi = parseAbi([
+  "function getPool(address tokenA,address tokenB,uint24 fee) view returns (address pool)"
+]);
+
+const glitchExecutorAbi = parseAbi([
+  "function swapSingle(address pool,address tokenIn,address tokenOut,uint32 feeAndFlags,uint256 amountIn,uint256 minAmountOut) payable returns (uint256 amountOut)",
+  "function swapTwoHop(address pool0,address pool1,address tokenIn,address tokenMid,address tokenOut,uint64 feesAndFlags,uint256 amountIn,uint256 minAmountOut) payable returns (uint256 amountOut)"
 ]);
 
 let tokenCache = { at: 0, map: new Map() };
@@ -534,6 +545,219 @@ async function getLifi({sellToken,buyToken,sellAmount,taker,slippageBps,gasPrice
   return withMetrics;
 }
 
+
+async function getV3Pool(tokenA,tokenB,fee){
+  const data=encodeFunctionData({
+    abi:factoryAbi,
+    functionName:"getPool",
+    args:[getAddress(tokenA.toLowerCase()),getAddress(tokenB.toLowerCase()),fee]
+  });
+  const result=await rpcCall(UNISWAP_V3_FACTORY,data);
+  const pool=decodeFunctionResult({abi:factoryAbi,functionName:"getPool",data:result});
+  return String(pool);
+}
+
+function singleFeeFlags(fee,nativeIn,nativeOut){
+  let packed=BigInt(fee);
+  if(nativeIn) packed|=1n<<24n;
+  if(nativeOut) packed|=1n<<25n;
+  return Number(packed);
+}
+function twoFeeFlags(fee0,fee1,nativeIn,nativeOut){
+  let packed=BigInt(fee0) | (BigInt(fee1)<<24n);
+  if(nativeIn) packed|=1n<<48n;
+  if(nativeOut) packed|=1n<<49n;
+  return packed;
+}
+
+function buildGlitchTransaction(candidate,{sellToken,buyToken,sellAmount,taker,slippageBps}){
+  if(!addressOk(GLITCH_EXECUTOR)) throw new Error("GLITCH_EXECUTOR_ADDRESS not configured");
+  const nativeIn=sellToken.toLowerCase()===NATIVE;
+  const nativeOut=buyToken.toLowerCase()===NATIVE;
+  const minimum=minOut(candidate.amountOut,slippageBps);
+
+  if(candidate.fees.length===1){
+    const data=encodeFunctionData({
+      abi:glitchExecutorAbi,
+      functionName:"swapSingle",
+      args:[
+        getAddress(candidate.pools[0].toLowerCase()),
+        getAddress(candidate.tokens[0].toLowerCase()),
+        getAddress(candidate.tokens[1].toLowerCase()),
+        singleFeeFlags(candidate.fees[0],nativeIn,nativeOut),
+        BigInt(sellAmount),
+        minimum
+      ]
+    });
+    return {
+      to:GLITCH_EXECUTOR,
+      data,
+      value:nativeIn?rpcHex(sellAmount):"0x0",
+      gas:null,
+      gasPrice:null
+    };
+  }
+
+  const data=encodeFunctionData({
+    abi:glitchExecutorAbi,
+    functionName:"swapTwoHop",
+    args:[
+      getAddress(candidate.pools[0].toLowerCase()),
+      getAddress(candidate.pools[1].toLowerCase()),
+      getAddress(candidate.tokens[0].toLowerCase()),
+      getAddress(candidate.tokens[1].toLowerCase()),
+      getAddress(candidate.tokens[2].toLowerCase()),
+      twoFeeFlags(candidate.fees[0],candidate.fees[1],nativeIn,nativeOut),
+      BigInt(sellAmount),
+      minimum
+    ]
+  });
+  return {
+    to:GLITCH_EXECUTOR,
+    data,
+    value:nativeIn?rpcHex(sellAmount):"0x0",
+    gas:null,
+    gasPrice:null
+  };
+}
+
+async function getGlitchDirect({sellToken,buyToken,sellAmount,taker,slippageBps,gasPrice,ethUsd,buyInfo,sellInfo}){
+  if(!addressOk(GLITCH_EXECUTOR)) throw new Error("GLITCH EXECUTOR NOT DEPLOYED");
+
+  const tokenIn=wrapped(sellToken), tokenOut=wrapped(buyToken);
+  if(tokenIn.toLowerCase()===tokenOut.toLowerCase()) throw new Error("WRAP_PAIR_HANDLED_SEPARATELY");
+
+  const candidates=[];
+
+  await Promise.all(FEES.map(async fee=>{
+    try{
+      const q=await quoteSingle(tokenIn,tokenOut,sellAmount,fee);
+      if(q.amountOut>0n)candidates.push(q);
+    }catch{}
+  }));
+
+  const mids=[getAddress(WETH.toLowerCase()),getAddress(USDG.toLowerCase())].filter(m=>
+    m.toLowerCase()!==tokenIn.toLowerCase() && m.toLowerCase()!==tokenOut.toLowerCase()
+  );
+
+  for(const mid of mids){
+    const legs1=[];
+    await Promise.all(FEES.map(async fee=>{
+      try{
+        const q=await quoteSingle(tokenIn,mid,sellAmount,fee);
+        if(q.amountOut>0n) legs1.push({fee,out:q.amountOut});
+      }catch{}
+    }));
+    legs1.sort((a,b)=>a.out===b.out?0:(a.out>b.out?-1:1));
+
+    for(const leg1 of legs1.slice(0,2)){
+      await Promise.all(FEES.map(async fee2=>{
+        try{
+          const q=await quotePath([tokenIn,mid,tokenOut],[leg1.fee,fee2],sellAmount);
+          if(q.amountOut>0n)candidates.push(q);
+        }catch{}
+      }));
+    }
+  }
+
+  if(!candidates.length) throw new Error("NO_V3_POOL_ROUTE");
+
+  const nativeIn=sellToken.toLowerCase()===NATIVE;
+  let approvalGas=0n;
+  let currentAllowance=2n**256n-1n;
+
+  if(!nativeIn){
+    currentAllowance=await allowance(sellToken,taker,GLITCH_EXECUTOR);
+    if(currentAllowance<BigInt(sellAmount)){
+      approvalGas=await estimateApprovalGas(sellToken,taker,GLITCH_EXECUTOR,sellAmount);
+    }
+  }
+
+  // First shortlist using Quoter gas as a cheap proxy. No size threshold:
+  // GLITCH DIRECT competes on every trade, from tiny to whale-size.
+  const prescored=candidates.map(c=>{
+    const gasUsd=gasUsdFromUnits(c.gasEstimate+approvalGas,gasPrice,ethUsd);
+    const grossUsd=tokenAmountUsd(c.amountOut.toString(),buyInfo);
+    return {...c,preNet:(grossUsd!=null&&gasUsd!=null)?grossUsd-gasUsd:null};
+  });
+  prescored.sort((a,b)=>{
+    if(a.preNet!=null&&b.preNet!=null&&a.preNet!==b.preNet)return a.preNet>b.preNet?-1:1;
+    if(a.amountOut!==b.amountOut)return a.amountOut>b.amountOut?-1:1;
+    return a.fees.length-b.fees.length;
+  });
+
+  const live=[];
+  for(const c of prescored.slice(0,4)){
+    try{
+      let pools;
+      if(c.fees.length===1){
+        const p0=await getV3Pool(c.tokens[0],c.tokens[1],c.fees[0]);
+        if(!addressOk(p0)||/^0x0{40}$/i.test(p0))continue;
+        pools=[p0];
+      }else{
+        const [p0,p1]=await Promise.all([
+          getV3Pool(c.tokens[0],c.tokens[1],c.fees[0]),
+          getV3Pool(c.tokens[1],c.tokens[2],c.fees[1])
+        ]);
+        if(!addressOk(p0)||!addressOk(p1)||/^0x0{40}$/i.test(p0)||/^0x0{40}$/i.test(p1))continue;
+        pools=[p0,p1];
+      }
+
+      const candidate={...c,pools};
+      const tx=buildGlitchTransaction(candidate,{sellToken,buyToken,sellAmount,taker,slippageBps});
+      if(gasPrice!=null)tx.gasPrice=ecoGasPrice(gasPrice);
+
+      let swapGas=null;
+      if(nativeIn || currentAllowance>=BigInt(sellAmount)){
+        swapGas=await estimateTxGas(tx,taker,null);
+      }
+
+      // First-time ERC20 allowance cannot be simulated against current state.
+      // Conservative fallback prevents the custom route from winning on an
+      // unrealistically low gas estimate.
+      if(swapGas==null){
+        swapGas=c.gasEstimate + (c.fees.length===1?42000n:61000n);
+      }
+
+      const base={
+        provider:"glitch",
+        label:"GLITCH DIRECT POOL",
+        buyAmount:c.amountOut.toString(),
+        minBuyAmount:minOut(c.amountOut,slippageBps).toString(),
+        approvalSpender:nativeIn?null:GLITCH_EXECUTOR,
+        providerFeeUsd:0,
+        route:c.fees.length===1
+          ? `POOL DIRECT // ${c.fees[0]/10000}%`
+          : `POOL → ${c.tokens[1].toLowerCase()===WETH.toLowerCase()?"WETH":"USDG"} → POOL // 2-HOP`,
+        transaction:tx,
+        complexity:c.fees.length===1?"POOL-DIRECT":"POOL-2HOP",
+        meta:{executor:GLITCH_EXECUTOR,pools,feeTiers:c.fees,hopCount:c.fees.length}
+      };
+      live.push(addGasMetrics(base,{
+        gasUnits:swapGas,
+        approvalGasUnits:approvalGas,
+        gasPrice,
+        ethUsd,
+        buyInfo,
+        sellInfo,
+        sellAmount
+      }));
+    }catch{}
+  }
+
+  if(!live.length)throw new Error("GLITCH DIRECT EXECUTION SIMULATION FAILED");
+
+  live.sort((a,b)=>{
+    if(a.netUsd!=null&&b.netUsd!=null&&a.netUsd!==b.netUsd)return a.netUsd>b.netUsd?-1:1;
+    const A=BigInt(a.buyAmount),B=BigInt(b.buyAmount);
+    if(A!==B)return A>B?-1:1;
+    const ga=BigInt(a.gasUnits||"0"),gb=BigInt(b.gasUnits||"0");
+    return ga===gb?0:(ga<gb?-1:1);
+  });
+
+  return live[0];
+}
+
 async function quoteSingle(tokenIn,tokenOut,amountIn,fee){
   const data=encodeFunctionData({
     abi:quoterAbi,functionName:"quoteExactInputSingle",
@@ -684,7 +908,7 @@ module.exports = async function handler(req,res){
     if(!addressOk(taker)) return json(res,400,{error:"INVALID_TAKER"});
     try{ if(BigInt(sellAmount)<=0n) throw 0; }catch{return json(res,400,{error:"INVALID_SELL_AMOUNT"});}
     if(!Number.isInteger(slippageBps)||slippageBps<1||slippageBps>500) return json(res,400,{error:"INVALID_SLIPPAGE"});
-    if(!["all","wrap","nordstern","lifi","uniswap","uniur","univ2"].includes(provider)) return json(res,400,{error:"INVALID_PROVIDER"});
+    if(!["all","wrap","glitch","nordstern","lifi","uniswap","uniur","univ2"].includes(provider)) return json(res,400,{error:"INVALID_PROVIDER"});
 
     // HARD PORTAL GATE: no executable quote is returned unless the taker
     // currently owns at least one DEAD PIXELS NFT.
@@ -711,8 +935,12 @@ module.exports = async function handler(req,res){
     }
 
     if(!isWrapPair){
-      // Native ETH trades get two extra "micro gas" paths. Each is simulated
-      // and only wins if its net result actually beats the alternatives.
+      // Full-range custom direct-pool candidate: no trade-size threshold.
+      // It competes on EVERY trade when the executor is deployed.
+      if((provider==="all"||provider==="glitch") && addressOk(GLITCH_EXECUTOR))
+        jobs.push(["GLITCH DIRECT",()=>getGlitchDirect(args)]);
+
+      // Native ETH trades also get official Uniswap micro-gas execution families.
       if(provider==="all"||provider==="uniur") jobs.push(["UNISWAP UNIVERSAL",()=>getUniswapUniversalNative(args)]);
       if(provider==="all"||provider==="univ2") jobs.push(["UNISWAP V2",()=>getUniswapV2Native(args)]);
       if(provider==="all"||provider==="nordstern") jobs.push(["NORDSTERN",()=>getNordstern(args)]);
@@ -747,6 +975,7 @@ module.exports = async function handler(req,res){
       sellValueUsd:sellUsd,
       providers:[
         {name:"DIRECT WRAP",enabled:true,for:"ETH/WETH"},
+        {name:"GLITCH DIRECT POOL",enabled:addressOk(GLITCH_EXECUTOR),for:"ALL TRADE SIZES"},
         {name:"UNISWAP UNIVERSAL",enabled:true,for:"NATIVE ETH INPUT"},
         {name:"UNISWAP V2 DIRECT",enabled:true,for:"NATIVE ETH INPUT"},
         {name:"NORDSTERN DIRECT",enabled:true},
@@ -754,7 +983,13 @@ module.exports = async function handler(req,res){
         {name:"LI.FI",enabled:true}
       ],
       quotes,errors,generatedAt:new Date().toISOString(),
+      glitchExecutor:{
+        configured:addressOk(GLITCH_EXECUTOR),
+        address:addressOk(GLITCH_EXECUTOR)?GLITCH_EXECUTOR:null,
+        mode:"DIRECT V3 POOL // SINGLE + TWO-HOP // ALL SIZES"
+      },
       uniswap:{
+        factory:UNISWAP_V3_FACTORY,
         quoter:UNISWAP_V3_QUOTER,
         swapRouter02:UNISWAP_SWAP_ROUTER_02,
         feeTiers:FEES

@@ -1,6 +1,6 @@
 {
-  "name": "dead-pixels-glitch-router-v2",
-  "version": "2.0.0",
+  "name": "dead-pixels-glitch-router-v3",
+  "version": "3.0.0",
   "private": true,
   "engines": {
     "node": ">=18"
