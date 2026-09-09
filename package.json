@@ -1,0 +1,11 @@
+{
+  "name": "dead-pixels-glitch-router-v6",
+  "version": "6.0.0",
+  "private": true,
+  "engines": {
+    "node": ">=18"
+  },
+  "dependencies": {
+    "viem": "^2.37.6"
+  }
+}
