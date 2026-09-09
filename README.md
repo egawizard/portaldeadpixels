@@ -1,4 +1,4 @@
-# GLITCH ROUTER V2.1 — ROBINHOOD UNISWAP FIX
+# DEAD PIXELS PORTAL V2.2 — GLITCH PAD PREVIEW
 
 **UNISWAP IS THE BASELINE. WE SEARCH FOR BETTER.**
 
@@ -166,3 +166,28 @@ show `UNISWAP API NOT ACTIVE` even though the API key itself was present.
 
 V2.1 explicitly uses `2.1.1` for `/quote` and execution requests and makes the
 health endpoint verify actual Uniswap API connectivity.
+
+
+## Portal Module 02 — GLITCH PAD
+
+A non-functional launchpad preview has been added below GLITCH ROUTER.
+
+Public status:
+
+```text
+COMING NEXT WEEK
+```
+
+Preview surfaces:
+
+- Create Token
+- Create Presale
+- Liquidity setup
+- LP Locker
+- Upcoming launches
+- DEAD PIXELS holder benefits teaser
+
+All launch actions are intentionally disabled. The page explicitly marks the
+module as `PREVIEW MODE`, so no launchpad transaction can be created yet.
+
+The existing GLITCH ROUTER backend and holder-gated swap flow are unchanged.
