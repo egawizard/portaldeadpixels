@@ -1,9 +1,9 @@
 {
-  "name": "dead-pixels-glitch-router-v2",
-  "version": "2.0.0",
+  "name": "dead-pixels-portal-v35",
+  "version": "3.5.1",
   "private": true,
   "engines": {
-    "node": ">=18"
+    "node": "22.x"
   },
   "dependencies": {
     "viem": "^2.37.6"

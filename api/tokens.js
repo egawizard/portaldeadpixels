@@ -1,5 +1,6 @@
 const CHAIN_ID=4663;
 const NATIVE="0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee";
+const {getAssets}=require("../lib/stocks");
 function json(res,code,body){
   res.statusCode=code;
   res.setHeader("Content-Type","application/json; charset=utf-8");
@@ -44,14 +45,24 @@ async function getNordstern(){
   const raw=Array.isArray(body)?body:Array.isArray(body.tokens)?body.tokens:Array.isArray(body.data)?body.data:[];
   return raw.map(t=>normalize(t,"NORDSTERN")).filter(Boolean);
 }
+
+async function getStockTokens(){
+  const assets=await getAssets();
+  return assets.map(a=>({
+    address:a.address,chainId:CHAIN_ID,symbol:a.symbol,name:a.name,decimals:18,
+    logoURI:a.logoUrl||null,priceUSD:null,sources:["ROBINHOOD STOCK TOKENS"],rwa:true,
+    currentMultiplier:a.currentMultiplier
+  }));
+}
+
 module.exports=async function handler(req,res){
   if(req.method!=="GET")return json(res,405,{error:"METHOD_NOT_ALLOWED"});
-  const settled=await Promise.allSettled([getLifi(),getNordstern()]);
+  const settled=await Promise.allSettled([getLifi(),getNordstern(),getStockTokens()]);
   const all=[];
   const errors=[];
   settled.forEach((x,i)=>{
     if(x.status==="fulfilled")all.push(...x.value);
-    else errors.push({source:i===0?"LI.FI":"NORDSTERN",error:x.reason?.message||"FAILED"});
+    else errors.push({source:i===0?"LI.FI":i===1?"NORDSTERN":"ROBINHOOD STOCK TOKENS",error:x.reason?.message||"FAILED"});
   });
   const map=new Map();
   for(const t of all){
@@ -63,11 +74,13 @@ module.exports=async function handler(req,res){
     if((!old.priceUSD||Number(old.priceUSD)===0)&&t.priceUSD)old.priceUSD=t.priceUSD;
     if((old.symbol==="TOKEN"||!old.symbol)&&t.symbol)old.symbol=t.symbol;
     if((old.name==="Token"||!old.name)&&t.name)old.name=t.name;
+    if(t.rwa)old.rwa=true;
+    if(!old.currentMultiplier&&t.currentMultiplier)old.currentMultiplier=t.currentMultiplier;
   }
   const tokens=[...map.values()].sort((a,b)=>{
     const pa=Number(a.priceUSD||0)>0?0:1,pb=Number(b.priceUSD||0)>0?0:1;
     if(pa!==pb)return pa-pb;
     return a.symbol.localeCompare(b.symbol);
   });
-  return json(res,200,{chainId:CHAIN_ID,count:tokens.length,tokens,errors,sources:["LI.FI","NORDSTERN"]});
+  return json(res,200,{chainId:CHAIN_ID,count:tokens.length,tokens,errors,sources:["LI.FI","NORDSTERN","ROBINHOOD STOCK TOKENS"]});
 };

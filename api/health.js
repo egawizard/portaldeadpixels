@@ -1,51 +1,44 @@
 const API="https://trade-api.gateway.uniswap.org/v1";
+const {getAssets}=require("../lib/stocks");
 module.exports=async function handler(req,res){
   res.setHeader("Content-Type","application/json; charset=utf-8");
   res.setHeader("Cache-Control","no-store");
 
   const key=String(process.env.UNISWAP_API_KEY||"");
-  let uniswapOfficial=false;
-  let robinhoodSupported=false;
-  let uniswapError=null;
+  let uniswapOfficial=false,robinhoodSupported=false,uniswapError=null;
+  let stockRegistry=false,stockTokenCount=0,stockRegistryError=null;
 
   if(key){
     try{
-      const r=await fetch(API+"/supported_chains",{
-        headers:{"x-api-key":key,"accept":"application/json"}
-      });
-      const text=await r.text();
-      let j; try{j=JSON.parse(text)}catch{j={}}
-      if(!r.ok) throw new Error(j?.message||j?.error||`HTTP_${r.status}`);
-      uniswapOfficial=true;
-      robinhoodSupported=Array.isArray(j.chains) &&
-        j.chains.some(c=>Number(c.chainId)===4663);
-    }catch(e){
-      uniswapError=e.message||"UNISWAP_API_CHECK_FAILED";
-    }
+      const r=await fetch(API+"/supported_chains",{headers:{"x-api-key":key,"accept":"application/json"}});
+      const text=await r.text();let j;try{j=JSON.parse(text)}catch{j={}}
+      if(!r.ok)throw new Error(j?.message||j?.error||`HTTP_${r.status}`);
+      uniswapOfficial=true;robinhoodSupported=Array.isArray(j.chains)&&j.chains.some(c=>Number(c.chainId)===4663);
+    }catch(e){uniswapError=e.message||"UNISWAP_API_CHECK_FAILED";}
   }
+  try{const assets=await getAssets();stockRegistry=true;stockTokenCount=assets.length;}catch(e){stockRegistryError=e.message||"STOCK_REGISTRY_CHECK_FAILED";}
 
   res.status(200).json({
     ok:true,
-    app:"GLITCH ROUTER V2.1 // ROBINHOOD UNISWAP FIX",
+    app:"DEAD PIXELS PORTAL V3.5.1 // UNIFIED EXECUTION OS // VERCEL SAFE",
     chainId:4663,
-    universalRouterVersion:"2.1.1",
     protocolFeeBps:0,
-    holderGate:{
-      enabled:true,
-      minimumNFTs:1,
-      nftContract:"0x27390fe7ae676fbfdb632e61cd4019996b07892c",
-      enforcement:"SERVER_SIDE_EXECUTABLE_QUOTE_GATE"
+    holderGate:{enabled:true,minimumNFTs:1,nftContract:"0x27390fe7ae676fbfdb632e61cd4019996b07892c",enforcement:"SERVER_SIDE_EXECUTABLE_QUOTE_GATE"},
+    modules:{
+      v30UnifiedPortalUI:true,
+      v31StockTokenRegistry:{enabled:stockRegistry,count:stockTokenCount},
+      v31MarketScanner:stockRegistry,
+      v32FairValueEngine:{enabled:stockRegistry,source:"RHJ_BID_ASK_X_CURRENT_MULTIPLIER"},
+      v32GlitchScore:true,
+      v33StockToStock:true,
+      v34PortfolioBuilder:true,
+      v34Rebalancer:true,
+      v35WaitForBetter:true,
+      v35ExecutionOrders:"CLIENT_WATCH_WALLET_CONFIRMATION"
     },
-    strategy:"UNISWAP IS THE BASELINE. WE SEARCH FOR BETTER.",
-    providers:{
-      directWrap:true,
-      uniswapOfficial,
-      uniswapRobinhood4663:robinhoodSupported,
-      uniswapX:"via Uniswap BEST_PRICE when eligible",
-      nordsternDirect:true,
-      lifi:true
-    },
-    uniswapError,
+    routing:{uniswapOfficial,uniswapRobinhood4663:robinhoodSupported,uniswapX:"via BEST_PRICE when eligible",nordsternDirect:true,lifi:true,directWrap:true},
+    universalRouterVersion:"2.1.1",
+    uniswapError,stockRegistryError,
     missing:key?[]:["UNISWAP_API_KEY"]
   });
 };

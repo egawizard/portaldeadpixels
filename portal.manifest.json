@@ -1,0 +1,16 @@
+{
+  "app": "DEAD PIXELS PORTAL",
+  "version": "3.5.0",
+  "chainId": 4663,
+  "protocolFeeBps": 0,
+  "modules": {
+    "v3.0": "UNIFIED PORTAL UI",
+    "v3.1": "STOCK TOKEN REGISTRY + MARKET SCANNER",
+    "v3.2": "FAIR VALUE ENGINE + GLITCH SCORE",
+    "v3.3": "STOCK-TO-STOCK",
+    "v3.4": "PORTFOLIO BUILDER + REBALANCER",
+    "v3.5": "WAIT FOR BETTER + EXECUTION ORDERS"
+  },
+  "executionOrderMode": "CLIENT_WATCH_WALLET_CONFIRMATION_REQUIRED",
+  "stockFairValueSource": "ROBINHOOD_RHJ_BID_ASK_X_CURRENT_MULTIPLIER"
+}

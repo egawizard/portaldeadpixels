@@ -4,8 +4,8 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#000000">
-<title>GLITCH ROUTER — DEAD PIXELS LABS</title>
-<meta name="description" content="GLITCH ROUTER // Robinhood Chain swap aggregator by DEAD PIXELS LABS.">
+<title>DEAD PIXELS PORTAL V3.5 — UNIFIED EXECUTION OS</title>
+<meta name="description" content="DEAD PIXELS PORTAL V3.5 // Unified execution, Stock Token scanner, fair value engine, portfolio tools and execution orders on Robinhood Chain.">
 <link rel="icon" href='data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><rect width="64" height="64"/><rect x="9" y="9" width="46" height="46" fill="none" stroke="%23c3ff23" stroke-width="4"/><rect x="23" y="23" width="18" height="18" fill="%23c3ff23"/></svg>'>
 <style>
 :root{
@@ -144,117 +144,36 @@ a{color:inherit}
  .footerline{font-size:7px}
 }
 
-/* ---------- PORTAL MODULE NAV ---------- */
-.chrome{gap:14px}
-.portal-nav{display:flex;align-items:center;gap:6px;margin-left:auto;margin-right:14px}
-.portal-tab{
-  display:flex;align-items:center;gap:7px;text-decoration:none;border:1px solid #252522;
-  padding:6px 8px;color:#77776f;background:rgba(5,5,5,.74);font-size:8px;letter-spacing:.08em
-}
-.portal-tab:hover{border-color:#4a4a43;color:#d7d6ce}
-.portal-tab span{font-size:7px;padding:2px 4px;border:1px solid #33332f;color:#8f8f86}
-.portal-tab.live{color:var(--ink);border-color:#3e4d20}
-.portal-tab.live i{width:5px;height:5px;border-radius:50%;background:var(--acid);box-shadow:0 0 10px var(--acid)}
-.portal-tab.live span{border-color:#536c19;color:var(--acid)}
-.portal-tab.next span{border-color:#4e4548;color:#b7a6aa}
-
-/* ---------- GLITCH PAD PREVIEW ---------- */
-.pad-zone{
-  position:relative;z-index:5;padding:46px 18px 88px;
-  border-top:1px solid rgba(255,255,255,.08);
-  background:
-    linear-gradient(180deg,rgba(0,0,0,.2),rgba(0,0,0,.96)),
-    repeating-linear-gradient(90deg,transparent 0 76px,rgba(195,255,35,.018) 76px 77px),
-    repeating-linear-gradient(0deg,transparent 0 76px,rgba(195,255,35,.014) 76px 77px);
-}
-.pad-zone:before{
-  content:"";position:absolute;inset:0;pointer-events:none;
-  background:radial-gradient(circle at 74% 23%,rgba(195,255,35,.075),transparent 0 28%);
-}
-.pad-shell{position:relative;max-width:1180px;margin:0 auto}
-.pad-topline{display:flex;align-items:flex-end;justify-content:space-between;gap:20px;padding-bottom:20px;border-bottom:1px solid #272724}
-.pad-module{font-size:9px;letter-spacing:.13em;color:#7a7a73}
-.pad-topline h2{margin:8px 0 0;font-size:clamp(56px,8vw,108px);line-height:.78;letter-spacing:-.075em;font-family:Arial Black,Impact,sans-serif}
-.pad-topline h2 em{font-style:normal;color:transparent;-webkit-text-stroke:1px var(--acid);text-shadow:0 0 30px rgba(195,255,35,.09)}
-.coming-chip{
-  flex:0 0 auto;border:1px solid #536c19;padding:10px 12px;color:var(--acid);
-  background:rgba(195,255,35,.035);font-size:9px;letter-spacing:.1em;box-shadow:inset 0 0 28px rgba(195,255,35,.025)
-}
-.coming-chip span{display:inline-block;width:6px;height:6px;background:var(--acid);margin-right:8px;box-shadow:0 0 13px var(--acid);animation:padPulse 1.3s steps(2) infinite}
-@keyframes padPulse{50%{opacity:.18}}
-.pad-intro{display:flex;align-items:flex-start;justify-content:space-between;gap:30px;padding:18px 0 26px}
-.pad-intro p{max-width:670px;margin:0;font:700 clamp(14px,2vw,20px)/1.5 Arial,sans-serif;color:#deddd6}
-.pad-status{display:flex;flex-direction:column;gap:6px;text-align:right;font-size:7px;color:#6e6e68;letter-spacing:.08em}
-.pad-status span:first-child{color:#aeb19e}
-.pad-status i{display:inline-block;width:5px;height:5px;border-radius:50%;background:var(--acid);box-shadow:0 0 8px var(--acid);margin-right:5px}
-.pad-grid{display:grid;grid-template-columns:minmax(0,1.55fr) minmax(310px,.75fr);gap:12px}
-.pad-console{border:1px solid #33332e;background:rgba(5,5,5,.92);box-shadow:0 24px 80px rgba(0,0,0,.5)}
-.pad-windowbar{height:35px;border-bottom:1px solid #30302d;display:flex;align-items:center;justify-content:space-between;padding:0 11px;font-size:8px;color:#8a8a82;letter-spacing:.08em;background:#080808}
-.pad-dots{display:flex;gap:5px}.pad-dots i{display:block;width:6px;height:6px;border:1px solid #55554f}.pad-dots i:first-child{background:var(--acid);border-color:var(--acid)}
-.pad-console-body{padding:15px}
-.launch-step-head{display:flex;justify-content:space-between;align-items:center;padding:3px 1px 12px;font-size:8px;color:#7d7d75}
-.launch-step-head b{color:var(--acid)}
-.launch-type-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:7px}
-.launch-type{
-  min-height:94px;text-align:left;border:1px solid #272724;background:#090909;color:#6d6d68;
-  padding:10px;display:flex;flex-direction:column;justify-content:flex-end;gap:4px;position:relative;cursor:not-allowed
-}
-.launch-type:disabled{opacity:1}
-.launch-type.selected{border-color:#546b1d;background:linear-gradient(145deg,rgba(195,255,35,.08),#080808 54%);color:#dfded6}
-.launch-type .type-icon{position:absolute;top:10px;right:10px;color:#55554e;font-size:19px}
-.launch-type.selected .type-icon{color:var(--acid);text-shadow:0 0 12px rgba(195,255,35,.6)}
-.launch-type b{font-size:9px;letter-spacing:.06em}.launch-type small{font-size:7px;color:#5c5c57}
-.fake-form{display:grid;grid-template-columns:1fr 1fr;margin-top:9px;border:1px solid #292926}
-.fake-form div{min-height:69px;padding:10px;border-right:1px solid #292926;border-bottom:1px solid #292926;display:flex;flex-direction:column;justify-content:space-between}
-.fake-form div:nth-child(2n){border-right:0}.fake-form div:nth-last-child(-n+2){border-bottom:0}
-.fake-form small{font-size:7px;color:#5f5f59;letter-spacing:.08em}.fake-form span{font-size:11px;color:#aaa9a2}
-.pad-action{
-  width:100%;margin-top:9px;border:1px solid #4f661d;background:var(--acid);color:#000;
-  min-height:54px;padding:0 14px;display:flex;align-items:center;justify-content:space-between;font-weight:900
-}
-.pad-action:disabled{cursor:not-allowed;opacity:.85;filter:saturate(.65)}
-.pad-action span{font-size:11px}.pad-action b{font-size:8px;border:1px solid #000;padding:4px 6px}
-.preview-warning{margin-top:8px;font-size:7px;color:#5c5c57;letter-spacing:.075em}
-.pad-side{display:grid;grid-template-rows:1fr 1fr;gap:12px}
-.pad-card{position:relative;overflow:hidden;border:1px solid #30302c;background:rgba(7,7,7,.94);padding:17px;min-height:220px}
-.pad-card:after{content:"";position:absolute;right:-25px;bottom:-28px;width:130px;height:130px;border:1px solid rgba(195,255,35,.11);transform:rotate(45deg)}
-.pad-card small{font-size:7px;color:#6f6f68;letter-spacing:.1em}.pad-card h3{font:900 23px/.95 Arial,sans-serif;margin:20px 0 10px;letter-spacing:-.04em}
-.pad-card p{font:11px/1.55 Arial,sans-serif;color:#83837c;max-width:315px}
-.card-index{position:absolute;right:14px;top:12px;color:#33332f;font-size:30px;font-weight:900}
-.feature-list{margin-top:16px;border-top:1px solid #292926}
-.feature-list span{display:flex;justify-content:space-between;padding:7px 1px;border-bottom:1px solid #22221f;font-size:8px;color:#93938c}.feature-list b{color:var(--acid)}
-.pad-card.holder{background:radial-gradient(circle at 76% 30%,rgba(195,255,35,.09),transparent 0 28%),#070707}
-.holder-orbit{position:absolute;right:19px;top:28px;width:86px;height:86px;display:grid;place-items:center}
-.orbit-ring{position:absolute;inset:0;border:1px dashed #4c5e24;border-radius:50%;animation:orbitSpin 12s linear infinite}
-.orbit-ring:after{content:"";position:absolute;width:6px;height:6px;border-radius:50%;background:var(--acid);left:50%;top:-3px;box-shadow:0 0 8px var(--acid)}
-@keyframes orbitSpin{to{transform:rotate(360deg)}}
-.orbit-core{font-size:27px;filter:grayscale(.25)}
-.encrypted{display:inline-block;margin-top:12px;border:1px dashed #3b3b36;padding:6px;color:#64645e;font-size:7px}
-.pad-bottom-grid{display:grid;grid-template-columns:1fr 1fr 1.2fr;gap:8px;margin-top:8px}
-.mini-launch-card{min-height:82px;border:1px solid #292926;background:#060606;padding:10px;display:grid;grid-template-columns:auto 42px 1fr auto;align-items:center;gap:10px;position:relative}
-.mini-state{position:absolute;right:7px;top:6px;font-size:6px;color:#6b6b65}
-.mini-logo{width:38px;height:38px;border:1px solid #32322e;display:grid;place-items:center;color:#464640;font-size:17px;background:#090909}
-.mini-launch-card div:nth-child(3){display:flex;flex-direction:column;gap:4px}.mini-launch-card small{font-size:6px;color:#5f5f59}.mini-launch-card b{font-size:9px;color:#93938c}.mini-launch-card em{font-style:normal;font-size:7px;color:#52524d;border:1px solid #272724;padding:4px}
-.terminal-card{display:flex;flex-direction:column;align-items:flex-start;justify-content:center;gap:5px;background:linear-gradient(90deg,rgba(195,255,35,.045),#050505)}
-.terminal-card b{font-size:9px;color:#c6c6bc}.terminal-card span{font-size:7px;color:var(--acid)}
-
-@media(max-width:940px){
- .portal-nav{display:none}
- .pad-grid{grid-template-columns:1fr}
- .pad-side{grid-template-columns:1fr 1fr;grid-template-rows:auto}
- .pad-bottom-grid{grid-template-columns:1fr 1fr}.terminal-card{grid-column:1/-1}
-}
-@media(max-width:620px){
- .pad-zone{padding:32px 11px 74px}
- .pad-topline{align-items:flex-start;flex-direction:column}
- .coming-chip{align-self:flex-start}
- .pad-intro{flex-direction:column}.pad-status{text-align:left}
- .launch-type-grid{grid-template-columns:1fr 1fr}
- .fake-form{grid-template-columns:1fr}.fake-form div{border-right:0!important;border-bottom:1px solid #292926!important}.fake-form div:last-child{border-bottom:0!important}
- .pad-side{grid-template-columns:1fr}
- .pad-bottom-grid{grid-template-columns:1fr}.terminal-card{grid-column:auto}
- .pad-topline h2{font-size:64px}
-}
+/* ===== PORTAL V3.5 // UNIFIED UI ===== */
+.chrome{height:64px;padding:0 14px;gap:12px}
+.portal-nav{display:flex;align-items:center;gap:5px;flex:1;justify-content:center;min-width:0;overflow-x:auto;scrollbar-width:none}
+.portal-nav::-webkit-scrollbar{display:none}
+.nav-tab{flex:0 0 auto;border:1px solid #2f2f2b;background:#070707;color:#77776f;padding:7px 8px;font-size:7px;letter-spacing:.08em;text-transform:uppercase;white-space:nowrap}
+.nav-tab:hover{color:#e5e4dc;border-color:#55554f}.nav-tab.active{color:#000;background:var(--acid);border-color:var(--acid);font-weight:900}.nav-tab.next{color:#9b8a8e;border-color:#43383b}
+.chrome-right{display:flex;align-items:center;gap:8px}.global-wallet{border:1px solid #40403b;background:#0b0b0a;color:#d8d7cf;padding:7px 9px;font-size:8px;white-space:nowrap}.global-wallet.connected{color:var(--acid);border-color:#536c19}
+.portal-page{position:relative;z-index:10}.portal-page:not(.active){display:none!important}
+#routerPage{padding-top:98px}
+.module-page{min-height:100svh;padding:96px 22px 76px;max-width:1220px;margin:0 auto}
+.module-head{display:grid;grid-template-columns:1fr auto;gap:24px;align-items:end;padding:12px 0 22px;border-bottom:1px solid #2b2b28;margin-bottom:14px}
+.module-kicker{font-size:8px;letter-spacing:.18em;color:#73736c;margin-bottom:8px}.module-head h1{font-family:Arial Black,Impact,sans-serif;font-size:clamp(42px,6.4vw,82px);line-height:.82;letter-spacing:-.065em;margin:0}.module-head h1 em{font-style:normal;color:var(--acid)}
+.module-head p{max-width:580px;color:#999990;font:11px/1.65 Arial,sans-serif;margin:15px 0 0}.module-version{border:1px solid #536c19;color:var(--acid);padding:9px 10px;font-size:8px;letter-spacing:.1em;background:rgba(195,255,35,.035);text-align:right}
+.module-grid{display:grid;grid-template-columns:minmax(0,1.35fr) minmax(320px,.65fr);gap:10px}.panel{border:1px solid #30302c;background:rgba(5,5,5,.94);position:relative;overflow:hidden}.panel-title{height:35px;padding:0 11px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid #292926;font-size:8px;letter-spacing:.1em;color:#999990}.panel-title b{color:var(--acid);font-size:7px}.panel-body{padding:13px}
+.portal-input,.portal-select{width:100%;border:1px solid #373733;background:#090909;color:#e0dfd8;padding:10px;outline:none;font-size:10px}.portal-input:focus,.portal-select:focus{border-color:#66665e}.field small{display:block;color:#65655f;font-size:7px;letter-spacing:.1em;margin-bottom:5px}.field-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}.field-grid.three{grid-template-columns:repeat(3,1fr)}
+.portal-action{border:1px solid var(--acid);background:var(--acid);color:#000;padding:11px 13px;font-size:9px;font-weight:900;letter-spacing:.06em}.portal-action.secondary{background:#090909;color:#d2d1ca;border-color:#41413c}.portal-action:disabled{background:#171715;color:#55554f;border-color:#30302c;cursor:not-allowed}.action-row{display:flex;gap:7px;margin-top:10px}.action-row .portal-action{flex:1}
+.stock-notice{margin:0 0 12px;padding:9px 10px;border-left:2px solid #c99a31;background:#151105;color:#a99768;font-size:7px;line-height:1.55}.source-line{color:#55554f;font-size:7px;margin-top:8px;line-height:1.5}
+.scanner-tools{display:flex;gap:7px;margin-bottom:9px}.scanner-tools input{flex:1}.scanner-list{display:flex;flex-direction:column;gap:5px;min-height:250px}.scanner-row{display:grid;grid-template-columns:minmax(130px,1fr) 110px 90px 70px;align-items:center;gap:8px;border:1px solid #292926;background:#070707;padding:8px 9px;cursor:pointer}.scanner-row:hover,.scanner-row.selected{border-color:#566d1d;background:linear-gradient(90deg,rgba(195,255,35,.05),#070707)}.stock-id{display:flex;align-items:center;gap:8px;min-width:0}.stock-logo{width:28px;height:28px;border:1px solid #343430;background:#0c0c0b;object-fit:cover}.stock-id b{display:block;font-size:9px}.stock-id small{display:block;color:#60605b;font-size:7px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.scanner-num{text-align:right}.scanner-num b{display:block;font:700 11px Arial,sans-serif}.scanner-num small{display:block;color:#60605b;font-size:7px;margin-top:3px}.score-pill{justify-self:end;min-width:52px;padding:6px;border:1px solid #3e4d20;color:var(--acid);font-size:8px;text-align:center}.score-pill.warn{color:#dfaa4a;border-color:#624c26}.score-pill.bad{color:#ff6680;border-color:#692b3b}
+.registry{margin-top:10px}.registry-list{display:grid;grid-template-columns:repeat(3,1fr);gap:5px;max-height:330px;overflow:auto}.registry-item{border:1px solid #282825;background:#060606;padding:8px;display:flex;align-items:center;gap:7px;min-width:0;cursor:pointer}.registry-item:hover{border-color:#4f4f48}.registry-item img{width:24px;height:24px;object-fit:cover}.registry-item b{display:block;font-size:8px}.registry-item small{display:block;font-size:6px;color:#5d5d57;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.score-big{display:flex;align-items:center;justify-content:space-between;border:1px solid #3c4b1d;background:linear-gradient(90deg,rgba(195,255,35,.065),#070707);padding:12px;margin-bottom:8px}.score-big strong{font:900 35px Arial Black,Arial,sans-serif;color:var(--acid);letter-spacing:-.05em}.score-big span{font-size:7px;color:#72726b}.score-components{display:grid;grid-template-columns:1fr 1fr;gap:5px}.score-component{border:1px solid #292926;padding:8px;background:#070707}.score-component small{display:block;color:#60605b;font-size:6px}.score-component b{font-size:10px}.metric-list{margin-top:8px;border-top:1px solid #292926}.metric{display:flex;justify-content:space-between;gap:10px;padding:8px 1px;border-bottom:1px solid #22221f;font-size:8px;color:#72726c}.metric b{color:#cfcec7;text-align:right}.metric.good b{color:var(--acid)}.metric.bad b{color:#ff6680}
+.shield{margin-top:9px;border:1px solid #34342f;padding:9px;background:#080808}.shield-head{display:flex;justify-content:space-between;font-size:8px}.shield-head b{color:#888881}.shield.pass{border-color:#536c19}.shield.pass .shield-head b{color:var(--acid)}.shield.block{border-color:#6a293b}.shield.block .shield-head b{color:#ff6680}.shield small{display:block;color:#5e5e58;font-size:7px;margin-top:5px;line-height:1.5}
+.rotate-viz{display:grid;grid-template-columns:1fr 54px 1fr;align-items:center;gap:8px;margin:10px 0}.rotate-token{border:1px solid #30302d;background:#070707;padding:12px;text-align:center}.rotate-token img{width:45px;height:45px;border:1px solid #343430;object-fit:cover}.rotate-token b{display:block;margin-top:6px;font:900 16px Arial,sans-serif}.rotate-token small{font-size:7px;color:#66665f}.rotate-arrow{text-align:center;color:var(--acid);font-size:24px}
+.result-box{margin-top:10px;border:1px solid #30302c;background:#060606;padding:11px;min-height:92px}.result-empty{color:#55554f;font-size:8px;line-height:1.7;text-align:center;padding:16px}.result-head{display:flex;justify-content:space-between;gap:10px}.result-head b{font-size:10px}.result-head span{font-size:8px;color:var(--acid)}
+.portfolio-rows{display:flex;flex-direction:column;gap:6px}.portfolio-row{display:grid;grid-template-columns:1fr 95px 34px;gap:6px;align-items:end;border:1px solid #292926;padding:8px;background:#070707}.portfolio-row .remove-row{height:36px;border:1px solid #34342f;background:#0a0a09;color:#777}.weight-total{margin-top:7px;display:flex;justify-content:space-between;font-size:8px;color:#6a6a64}.weight-total b{color:var(--acid)}.plan-list{display:flex;flex-direction:column;gap:6px}.plan-step{display:grid;grid-template-columns:34px 1fr auto;gap:9px;align-items:center;border:1px solid #2e2e2a;background:#070707;padding:9px}.step-no{width:30px;height:30px;border:1px solid #43433e;display:grid;place-items:center;font-size:8px;color:var(--acid)}.plan-step b{display:block;font-size:9px}.plan-step small{display:block;color:#66665f;font-size:7px;margin-top:3px}.plan-step button{border:1px solid #536c19;background:#0a0a08;color:var(--acid);padding:7px;font-size:7px}
+.order-info{padding:9px;border:1px dashed #373732;color:#77776f;font-size:7px;line-height:1.6;margin-bottom:10px}.orders-list{display:flex;flex-direction:column;gap:7px}.order-card{border:1px solid #30302d;background:#070707;padding:10px}.order-card.ready{border-color:#5d7819;background:linear-gradient(90deg,rgba(195,255,35,.07),#070707)}.order-card.error{border-color:#652b39}.order-head{display:flex;justify-content:space-between;gap:10px}.order-head b{font-size:10px}.order-state{font-size:7px;border:1px solid #3c3c37;padding:4px 6px;color:#85857e}.order-card.ready .order-state{color:#000;background:var(--acid);border-color:var(--acid)}.order-meta{display:grid;grid-template-columns:repeat(4,1fr);gap:5px;margin-top:8px}.order-meta div{border:1px solid #242421;padding:6px}.order-meta small{display:block;color:#55554f;font-size:6px}.order-meta b{font-size:8px}.order-actions{display:flex;gap:5px;margin-top:7px}.order-actions button{flex:1;border:1px solid #343430;background:#0a0a09;color:#999991;padding:6px;font-size:7px}.order-actions .ready-btn{border-color:#536c19;color:var(--acid)}
+.pad-preview{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}.pad-card{min-height:150px;border:1px solid #30302d;background:linear-gradient(145deg,rgba(195,255,35,.035),#060606 45%);padding:13px;position:relative}.pad-card span{font-size:24px;color:#55554e}.pad-card b{display:block;margin-top:35px;font-size:10px}.pad-card small{display:block;color:#62625c;font-size:7px;margin-top:5px}.coming-bar{margin-top:10px;border:1px solid #536c19;color:var(--acid);padding:11px;text-align:center;font-size:9px;letter-spacing:.12em;background:rgba(195,255,35,.035)}
+.loading-bar{height:2px;background:#20201e;overflow:hidden;margin-top:8px}.loading-bar i{display:block;height:100%;width:35%;background:var(--acid);animation:scanLoad 1.1s linear infinite}@keyframes scanLoad{from{transform:translateX(-120%)}to{transform:translateX(350%)}}
+@media(max-width:1050px){.brand span.brand-long{display:none}.net{display:none}.module-grid{grid-template-columns:1fr}.registry-list{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:760px){.chrome{height:102px;align-items:flex-start;padding-top:10px;flex-wrap:wrap}.brand{height:27px}.chrome-right{margin-left:auto;height:27px}.portal-nav{order:3;width:100%;justify-content:flex-start}.module-page{padding:124px 10px 65px}#routerPage{padding-top:132px}.module-head{grid-template-columns:1fr}.module-version{text-align:left;width:max-content}.field-grid,.field-grid.three{grid-template-columns:1fr 1fr}.scanner-row{grid-template-columns:1fr 88px 60px}.scanner-row .scanner-num:nth-child(3){display:none}.pad-preview{grid-template-columns:1fr 1fr}.order-meta{grid-template-columns:1fr 1fr}}
+@media(max-width:500px){.field-grid,.field-grid.three{grid-template-columns:1fr}.registry-list{grid-template-columns:1fr}.scanner-row{grid-template-columns:1fr 82px}.scanner-row .scanner-num:nth-child(3){display:none}.score-components{grid-template-columns:1fr 1fr}.rotate-viz{grid-template-columns:1fr 36px 1fr}.pad-preview{grid-template-columns:1fr}.portfolio-row{grid-template-columns:1fr 80px 34px}}
 
 </style>
 </head>
@@ -265,15 +184,22 @@ a{color:inherit}
 <div class="glitchline"></div>
 
 <header class="chrome">
-  <div class="brand"><span class="sig"></span> DEAD PIXELS LABS // PORTAL</div>
-  <nav class="portal-nav">
-    <a href="#router" class="portal-tab live"><i></i> ROUTER <span>LIVE</span></a>
-    <a href="#glitchpad" class="portal-tab next">GLITCH PAD <span>NEXT WEEK</span></a>
+  <div class="brand"><span class="sig"></span><span class="brand-long">DEAD PIXELS LABS // </span>PORTAL V3.5</div>
+  <nav class="portal-nav" aria-label="Portal modules">
+    <button class="nav-tab active" data-page="routerPage">01 ROUTER</button>
+    <button class="nav-tab" data-page="stocksPage">02 STOCK ENGINE</button>
+    <button class="nav-tab" data-page="rotatePage">03 ROTATE</button>
+    <button class="nav-tab" data-page="portfolioPage">04 PORTFOLIO</button>
+    <button class="nav-tab" data-page="ordersPage">05 ORDERS</button>
+    <button class="nav-tab next" data-page="padPage">06 GLITCH PAD</button>
   </nav>
-  <div class="net"><i></i><span>ROBINHOOD CHAIN // 4663</span></div>
+  <div class="chrome-right">
+    <div class="net"><i></i><span>4663</span></div>
+    <button id="portalWalletBtn" class="global-wallet">CONNECT</button>
+  </div>
 </header>
 
-<main id="router" class="page">
+<main id="routerPage" class="page portal-page active">
   <section class="hero">
     <div class="kicker">PORTAL MODULE 01 // EXECUTION LAYER</div>
     <h1>GLITCH<br><em>ROUTER</em></h1>
@@ -287,7 +213,7 @@ a{color:inherit}
 
   <section class="swap-shell">
     <div class="windowbar">
-      <span>GLITCH_SWAP.EXE // V2</span>
+      <span>GLITCH_SWAP.EXE // V3.5 CORE</span>
       <span class="dots"><i></i><i></i><i></i></span>
     </div>
     <div class="swap">
@@ -348,7 +274,7 @@ a{color:inherit}
         </select>
       </div>
 
-      <div id="rwaNotice" class="rwa">RWA NOTICE // NVDA is a tokenized real-world asset. Availability and transfer/trading restrictions may depend on jurisdiction and issuer/provider rules.</div>
+      <div id="rwaNotice" class="rwa">STOCK TOKEN NOTICE // Availability, transfer and trading restrictions may depend on jurisdiction and issuer rules. This interface does not determine your legal eligibility.</div>
 
       <div id="baselinePanel" class="baseline-panel">
         <span>UNISWAP BASELINE</span>
@@ -370,141 +296,90 @@ a{color:inherit}
 </main>
 
 
-<section id="glitchpad" class="pad-zone">
-  <div class="pad-shell">
-    <div class="pad-topline">
-      <div>
-        <span class="pad-module">PORTAL MODULE 02 // LAUNCH INFRASTRUCTURE</span>
-        <h2>GLITCH <em>PAD</em></h2>
-      </div>
-      <div class="coming-chip"><span></span> COMING NEXT WEEK</div>
-    </div>
-
-    <div class="pad-intro">
-      <p>Launch tokens. Build sales. Lock liquidity. One corrupted interface for Robinhood Chain.</p>
-      <div class="pad-status">
-        <span><i></i> UI PREVIEW ONLINE</span>
-        <span>SMART CONTRACTS // FINALIZING</span>
-        <span>PUBLIC ACCESS // LOCKED</span>
-      </div>
-    </div>
-
-    <div class="pad-grid">
-      <article class="pad-console">
-        <div class="pad-windowbar">
-          <span>GLITCH_LAUNCH.EXE</span>
-          <span class="pad-dots"><i></i><i></i><i></i></span>
-        </div>
-
-        <div class="pad-console-body">
-          <div class="launch-step-head">
-            <span>CREATE NEW LAUNCH</span>
-            <b>01 / 04</b>
-          </div>
-
-          <div class="launch-type-grid">
-            <button class="launch-type selected" disabled>
-              <span class="type-icon">◈</span>
-              <b>CREATE TOKEN</b>
-              <small>DEPLOY ERC-20</small>
-            </button>
-            <button class="launch-type" disabled>
-              <span class="type-icon">◇</span>
-              <b>CREATE PRESALE</b>
-              <small>FIXED PRICE SALE</small>
-            </button>
-            <button class="launch-type" disabled>
-              <span class="type-icon">⌁</span>
-              <b>LIQUIDITY</b>
-              <small>AUTO LP SETUP</small>
-            </button>
-            <button class="launch-type" disabled>
-              <span class="type-icon">▣</span>
-              <b>LP LOCKER</b>
-              <small>LOCK POSITION</small>
-            </button>
-          </div>
-
-          <div class="fake-form">
-            <div>
-              <small>TOKEN NAME</small>
-              <span>YOUR PROJECT</span>
-            </div>
-            <div>
-              <small>SYMBOL</small>
-              <span>$TICKER</span>
-            </div>
-            <div>
-              <small>TOTAL SUPPLY</small>
-              <span>1,000,000,000</span>
-            </div>
-            <div>
-              <small>NETWORK</small>
-              <span>ROBINHOOD CHAIN // 4663</span>
-            </div>
-          </div>
-
-          <button class="pad-action" disabled>
-            <span>INITIALIZE LAUNCH</span>
-            <b>COMING NEXT WEEK</b>
-          </button>
-
-          <div class="preview-warning">
-            PREVIEW MODE // NO TRANSACTION CAN BE CREATED FROM THIS MODULE YET
-          </div>
-        </div>
-      </article>
-
-      <aside class="pad-side">
-        <div class="pad-card feature">
-          <span class="card-index">01</span>
-          <small>LAUNCH STACK</small>
-          <h3>FROM ZERO<br>TO MARKET.</h3>
-          <p>A single launch flow designed to take a project from token creation to sale and liquidity.</p>
-          <div class="feature-list">
-            <span>CREATE TOKEN <b>→</b></span>
-            <span>BUILD PRESALE <b>→</b></span>
-            <span>FINALIZE SALE <b>→</b></span>
-            <span>LOCK LIQUIDITY <b>→</b></span>
-          </div>
-        </div>
-
-        <div class="pad-card holder">
-          <small>DEAD PIXELS ACCESS</small>
-          <div class="holder-orbit">
-            <div class="orbit-ring"></div>
-            <div class="orbit-core">👾</div>
-          </div>
-          <h3>HOLDERS GET<br>THE EDGE.</h3>
-          <p>Special access and launch benefits for DEAD PIXELS holders will be revealed with the release.</p>
-          <span class="encrypted">BENEFITS // [ENCRYPTED]</span>
-        </div>
-      </aside>
-    </div>
-
-    <div class="pad-bottom-grid">
-      <div class="mini-launch-card">
-        <span class="mini-state">UPCOMING</span>
-        <div class="mini-logo">?</div>
-        <div><small>PROJECT 001</small><b>CLASSIFIED</b></div>
-        <em>LOCKED</em>
-      </div>
-      <div class="mini-launch-card">
-        <span class="mini-state">UPCOMING</span>
-        <div class="mini-logo">?</div>
-        <div><small>PROJECT 002</small><b>CLASSIFIED</b></div>
-        <em>LOCKED</em>
-      </div>
-      <div class="mini-launch-card terminal-card">
-        <small>SYSTEM MESSAGE</small>
-        <b>MORE INFRASTRUCTURE IS BEING BUILT.</b>
-        <span>REVEALED ONE GLITCH AT A TIME.</span>
-      </div>
-    </div>
+<main id="stocksPage" class="portal-page module-page">
+  <div class="module-head">
+    <div><div class="module-kicker">V3.1 + V3.2 // STOCK TOKEN REGISTRY + FAIR VALUE ENGINE</div><h1>STOCK <em>ENGINE</em></h1><p>Discover Robinhood Stock Tokens, scan official market references, compare executable routes and measure execution quality before you trade.</p></div>
+    <div class="module-version">LIVE DATA // 15S MARKET CACHE<br>GLITCH SCORE // 0–100</div>
   </div>
-</section>
+  <div class="stock-notice">STOCK TOKEN NOTICE // Access, transfer and trading restrictions may apply by jurisdiction and issuer rules. This interface does not determine your legal eligibility. Market reference data is informational, not investment advice.</div>
+  <div class="module-grid">
+    <section class="panel">
+      <div class="panel-title"><span>GLITCH_MARKET_SCANNER.EXE</span><b id="scannerStatus">LOADING REGISTRY...</b></div>
+      <div class="panel-body">
+        <div class="scanner-tools"><input id="scannerSearch" class="portal-input" placeholder="SEARCH STOCK TOKEN // SYMBOL"><button id="refreshScanner" class="portal-action secondary">REFRESH</button></div>
+        <div id="scannerList" class="scanner-list"><div class="result-empty">CONNECTING TO ROBINHOOD STOCK TOKEN REGISTRY...</div></div>
+        <div class="source-line">FAIR REFERENCE // official RHJ bid/ask adjusted by current Stock Token multiplier. Execution quality is calculated separately against live executable routing.</div>
+      </div>
+    </section>
+    <section class="panel">
+      <div class="panel-title"><span>FAIR_VALUE_SHIELD.EXE</span><b id="stockDetailState">SELECT ASSET</b></div>
+      <div class="panel-body">
+        <div class="field-grid">
+          <label class="field"><small>ASSET</small><select id="stockAnalyzeSymbol" class="portal-select"></select></label>
+          <label class="field"><small>TEST NOTIONAL // USDG</small><input id="stockAnalyzeAmount" class="portal-input" value="100" inputmode="decimal"></label>
+        </div>
+        <label class="field" style="display:block;margin-top:8px"><small>MAX EXECUTION DEVIATION // %</small><input id="stockShieldMax" class="portal-input" value="0.25" inputmode="decimal"></label>
+        <div id="stockScoreBox" class="result-box"><div class="result-empty">SELECT A STOCK TOKEN AND ANALYZE EXECUTION.</div></div>
+        <div class="action-row"><button id="analyzeStockBtn" class="portal-action secondary">ANALYZE EXECUTION</button><button id="tradeStockBtn" class="portal-action" disabled>LOAD INTO ROUTER</button></div>
+      </div>
+    </section>
+  </div>
+  <section class="panel registry">
+    <div class="panel-title"><span>STOCK_TOKEN_REGISTRY.DB</span><b id="registryCount">0 ASSETS</b></div>
+    <div class="panel-body"><input id="registrySearch" class="portal-input" placeholder="FILTER ALL STOCK TOKENS // NAME // SYMBOL // CONTRACT"><div id="registryList" class="registry-list" style="margin-top:7px"></div></div>
+  </section>
+</main>
 
-<div class="footerline"><span>ERROR MAKES US UNIQUE.</span><span>ROUTER // LIVE &nbsp; • &nbsp; GLITCH PAD // NEXT WEEK</span></div>
+<main id="rotatePage" class="portal-page module-page">
+  <div class="module-head"><div><div class="module-kicker">V3.3 // STOCK-TO-STOCK EXECUTION</div><h1>STOCK <em>ROTATOR</em></h1><p>Move directly from one Stock Token exposure to another. GLITCH estimates fair cross-value, scans execution and blocks routes that exceed your Fair Value Shield.</p></div><div class="module-version">STOCK → STOCK<br>NO MANUAL STABLECOIN HOP</div></div>
+  <div class="module-grid">
+    <section class="panel"><div class="panel-title"><span>ROTATE_POSITION.EXE</span><b>HOLDER EXECUTION</b></div><div class="panel-body">
+      <div class="field-grid three"><label class="field"><small>SELL STOCK</small><select id="rotateSell" class="portal-select"></select></label><label class="field"><small>AMOUNT</small><input id="rotateAmount" class="portal-input" value="1" inputmode="decimal"></label><label class="field"><small>BUY STOCK</small><select id="rotateBuy" class="portal-select"></select></label></div>
+      <div class="rotate-viz"><div id="rotateSellViz" class="rotate-token"><span>SELL</span></div><div class="rotate-arrow">→</div><div id="rotateBuyViz" class="rotate-token"><span>BUY</span></div></div>
+      <label class="field"><small>FAIR VALUE SHIELD // MAX SHORTFALL %</small><input id="rotateShield" class="portal-input" value="0.30" inputmode="decimal"></label>
+      <div id="rotateResult" class="result-box"><div class="result-empty">CHOOSE TWO STOCK TOKENS TO ANALYZE THE ROTATION.</div></div>
+      <div class="action-row"><button id="rotateAnalyzeBtn" class="portal-action secondary">ANALYZE ROTATION</button><button id="rotateTradeBtn" class="portal-action" disabled>LOAD ROTATION INTO ROUTER</button></div>
+    </div></section>
+    <aside class="panel"><div class="panel-title"><span>CROSS_VALUE.LOG</span><b>FAIR REFERENCE</b></div><div class="panel-body"><div id="rotateMetrics" class="metric-list"><div class="result-empty">NO ANALYSIS YET.</div></div></div></aside>
+  </div>
+</main>
+
+<main id="portfolioPage" class="portal-page module-page">
+  <div class="module-head"><div><div class="module-kicker">V3.4 // PORTFOLIO BUILDER + REBALANCER</div><h1>PORTFOLIO <em>ENGINE</em></h1><p>Build a Stock Token allocation from USDG or scan selected wallet positions and generate a non-custodial rebalance queue. Every step returns to GLITCH ROUTER for wallet-confirmed execution.</p></div><div class="module-version">NO CUSTODY<br>SEQUENTIAL WALLET EXECUTION</div></div>
+  <div class="module-grid">
+    <section class="panel"><div class="panel-title"><span>PORTFOLIO_BUILDER.EXE</span><b id="weightTotal">TARGET // 100%</b></div><div class="panel-body">
+      <div class="field-grid"><label class="field"><small>NEW PORTFOLIO CAPITAL // USDG</small><input id="portfolioCapital" class="portal-input" value="1000" inputmode="decimal"></label><div class="field"><small>MODE</small><div class="action-row" style="margin:0"><button id="buildPlanBtn" class="portal-action secondary">BUILD NEW</button><button id="rebalanceBtn" class="portal-action secondary">REBALANCE WALLET</button></div></div></div>
+      <div id="portfolioRows" class="portfolio-rows" style="margin-top:10px"></div>
+      <button id="addPortfolioRow" class="portal-action secondary" style="width:100%;margin-top:7px">+ ADD ASSET</button>
+      <div class="weight-total"><span>WEIGHTS MUST TOTAL 100%</span><b id="weightSum">100.00%</b></div>
+      <div id="portfolioStatus" class="source-line">READY // BUILD NEW uses USDG. REBALANCE scans selected Stock Token balances and matches overweight → underweight positions directly where possible.</div>
+    </div></section>
+    <section class="panel"><div class="panel-title"><span>EXECUTION_QUEUE.LOG</span><b id="planCount">0 STEPS</b></div><div class="panel-body"><div id="portfolioPlan" class="plan-list"><div class="result-empty">NO PORTFOLIO PLAN GENERATED.</div></div></div></section>
+  </div>
+</main>
+
+<main id="ordersPage" class="portal-page module-page">
+  <div class="module-head"><div><div class="module-kicker">V3.5 // WAIT FOR BETTER + EXECUTION ORDERS</div><h1>GLITCH <em>ORDERS</em></h1><p>Arm execution-quality conditions instead of blindly taking the current route. The watcher checks fair value, route deviation, gas and GLITCH SCORE, then alerts you when the conditions are met.</p></div><div class="module-version">NON-CUSTODIAL WATCH<br>WALLET CONFIRMATION REQUIRED</div></div>
+  <div class="module-grid">
+    <section class="panel"><div class="panel-title"><span>WAIT_FOR_BETTER.EXE</span><b>CLIENT WATCH ENGINE</b></div><div class="panel-body">
+      <div class="order-info">WATCH ORDERS ARE STORED LOCALLY IN THIS BROWSER AND CHECKED WHILE THE PORTAL IS OPEN. THEY DO NOT CUSTODY FUNDS AND CANNOT SIGN OR EXECUTE A TRANSACTION WITHOUT YOUR WALLET CONFIRMATION.</div>
+      <div class="field-grid three"><label class="field"><small>SIDE</small><select id="orderSide" class="portal-select"><option value="buy">BUY</option><option value="sell">SELL</option></select></label><label class="field"><small>STOCK TOKEN</small><select id="orderStock" class="portal-select"></select></label><label class="field"><small id="orderAmountLabel">AMOUNT // USDG</small><input id="orderAmount" class="portal-input" value="100" inputmode="decimal"></label></div>
+      <div class="field-grid" style="margin-top:8px"><label class="field"><small>TARGET FAIR PRICE // OPTIONAL</small><input id="orderTargetPrice" class="portal-input" placeholder="BUY ≤ / SELL ≥" inputmode="decimal"></label><label class="field"><small>MAX EXECUTION DEVIATION // %</small><input id="orderMaxDeviation" class="portal-input" value="0.25" inputmode="decimal"></label></div>
+      <div class="field-grid" style="margin-top:8px"><label class="field"><small>MIN GLITCH SCORE</small><input id="orderMinScore" class="portal-input" value="90" inputmode="numeric"></label><label class="field"><small>MAX USER GAS // USD</small><input id="orderMaxGas" class="portal-input" value="0.25" inputmode="decimal"></label></div>
+      <button id="armOrderBtn" class="portal-action" style="width:100%;margin-top:10px">ARM EXECUTION ORDER</button>
+      <div id="orderStatus" class="source-line">WATCH ENGINE READY.</div>
+    </div></section>
+    <section class="panel"><div class="panel-title"><span>ARMED_ORDERS.DB</span><b id="ordersCount">0 ACTIVE</b></div><div class="panel-body"><div id="ordersList" class="orders-list"><div class="result-empty">NO EXECUTION ORDERS ARMED.</div></div></div></section>
+  </div>
+</main>
+
+<main id="padPage" class="portal-page module-page">
+  <div class="module-head"><div><div class="module-kicker">PORTAL MODULE 06 // LAUNCH INFRASTRUCTURE</div><h1>GLITCH <em>PAD</em></h1><p>The launch infrastructure module remains in development while the Stock Engine ships as part of the unified Portal update.</p></div><div class="module-version">COMING NEXT WEEK</div></div>
+  <div class="pad-preview"><div class="pad-card"><span>◈</span><b>CREATE TOKEN</b><small>ERC-20 DEPLOYMENT FLOW</small></div><div class="pad-card"><span>◇</span><b>CREATE PRESALE</b><small>FIXED PRICE SALE ENGINE</small></div><div class="pad-card"><span>⌁</span><b>LIQUIDITY</b><small>POST-SALE LIQUIDITY FLOW</small></div><div class="pad-card"><span>▣</span><b>LP LOCKER</b><small>LOCK POSITION INFRASTRUCTURE</small></div></div>
+  <div class="coming-bar">GLITCH PAD // COMING NEXT WEEK // PREVIEW ONLY</div>
+</main>
+
+<div class="footerline"><span>ERROR MAKES US UNIQUE.</span><span>PORTAL V3.5 // UNIFIED EXECUTION OS</span></div>
 
 <script>
 (() => {
@@ -525,7 +400,7 @@ a{color:inherit}
 
   const $ = id => document.getElementById(id);
   const els = {
-    walletBtn:$("walletBtn"), holderGate:$("holderGate"), holderGateTitle:$("holderGateTitle"), holderGateDetail:$("holderGateDetail"), holderGateBadge:$("holderGateBadge"), sellAmount:$("sellAmount"), sellToken:$("sellToken"), buyToken:$("buyToken"),
+    walletBtn:$("walletBtn"), portalWalletBtn:$("portalWalletBtn"), holderGate:$("holderGate"), holderGateTitle:$("holderGateTitle"), holderGateDetail:$("holderGateDetail"), holderGateBadge:$("holderGateBadge"), sellAmount:$("sellAmount"), sellToken:$("sellToken"), buyToken:$("buyToken"),
     buyAmount:$("buyAmount"), slippage:$("slippage"), quotePanel:$("quotePanel"), actionBtn:$("actionBtn"),
     status:$("statusLog"), maxBtn:$("maxBtn"), reverseBtn:$("reverseBtn"), rwa:$("rwaNotice"),
     sellCustomWrap:$("sellCustomWrap"), buyCustomWrap:$("buyCustomWrap"),
@@ -538,6 +413,10 @@ a{color:inherit}
   let holderState = {checked:false,eligible:false,balance:0};
   let customSell = null, customBuy = null, quoteAbort = null;
   let tokenCatalog = [];
+  let stockRegistry = [], stockScanItems = [], selectedStockAnalysis = null, rotateAnalysis = null;
+  let portfolioRowsState = [], portfolioPlanState = [];
+  let executionOrders = [];
+  const ORDER_STORE = "dead_pixels_glitch_orders_v35";
 
   function addrOk(v){ return /^0x[a-fA-F0-9]{40}$/.test(v || ""); }
   function short(v){ return v ? v.slice(0,6)+"…"+v.slice(-4) : "--"; }
@@ -713,7 +592,9 @@ a{color:inherit}
     els.sellCustomWrap.classList.toggle("show",els.sellToken.value==="CUSTOM");
     els.buyCustomWrap.classList.toggle("show",els.buyToken.value==="CUSTOM");
     const values=[els.sellToken.value,els.buyToken.value].join("|").toLowerCase();
-    const isRwa=values.includes("nvda")||values.includes(TOKENS.NVDA.address.toLowerCase());
+    const stockAddresses=new Set(stockRegistry.map(x=>x.address.toLowerCase()));
+    const selectedAddrs=[els.sellToken.value,els.buyToken.value].filter(v=>String(v).startsWith("ADDR:")).map(v=>v.slice(5).toLowerCase());
+    const isRwa=values.includes("nvda")||values.includes(TOKENS.NVDA.address.toLowerCase())||!!customSell?.rwa||!!customBuy?.rwa||stockAddresses.has(customSell?.address?.toLowerCase?.()||"")||stockAddresses.has(customBuy?.address?.toLowerCase?.()||"")||selectedAddrs.some(a=>stockAddresses.has(a));
     els.rwa.classList.toggle("show",isRwa);
   }
   updateCustomUI();
@@ -740,6 +621,7 @@ a{color:inherit}
       const a=await ethereum.request({method:"eth_requestAccounts"});
       account=a[0];
       els.walletBtn.textContent=short(account); els.walletBtn.classList.add("connected");
+      if(els.portalWalletBtn){els.portalWalletBtn.textContent=short(account);els.portalWalletBtn.classList.add("connected");}
       setStatus("WALLET CONNECTED // ROBINHOOD CHAIN","ok");
       await updateBalance();
       await checkHolder();
@@ -1091,6 +973,170 @@ a{color:inherit}
   bindTokenSearch(els.sellTokenSearch,els.sellToken,"sell");
   bindTokenSearch(els.buyTokenSearch,els.buyToken,"buy");
 
+
+  // ================= PORTAL V3.0–V3.5 UNIFIED MODULES =================
+  const qid=id=>document.getElementById(id);
+  const num=(v,d=0)=>{const x=Number(v);return Number.isFinite(x)?x:d};
+  const money=v=>v!=null&&v!==""&&Number.isFinite(Number(v))?`$${Number(v).toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:4})}`:"--";
+  const pct=v=>v!=null&&v!==""&&Number.isFinite(Number(v))?`${Number(v)>=0?"+":""}${Number(v).toFixed(3)}%`:"--";
+  function stockBySymbol(symbol){return stockRegistry.find(x=>x.symbol===String(symbol||"").toUpperCase())||null;}
+  function stockToken(symbol){const x=stockBySymbol(symbol);return x?{symbol:x.symbol,name:x.name,address:x.address,decimals:18,rwa:true}:null;}
+  function scoreClass(s){return s>=90?"":s>=70?"warn":"bad";}
+  function optionHtml(x){return `<option value="${escapeHtml(x.symbol)}">${escapeHtml(x.symbol)} // ${escapeHtml(x.name)}</option>`;}
+  function stockVisual(el,symbol){
+    if(!el)return;const x=stockBySymbol(symbol);if(!x){el.innerHTML="<span>--</span>";return;}
+    el.innerHTML=`${x.logoUrl?`<img src="${escapeHtml(x.logoUrl)}" alt="">`:""}<b>${escapeHtml(x.symbol)}</b><small>${escapeHtml(x.name)}</small>`;
+  }
+  function switchPage(id){
+    document.querySelectorAll(".portal-page").forEach(x=>x.classList.toggle("active",x.id===id));
+    document.querySelectorAll(".nav-tab").forEach(x=>x.classList.toggle("active",x.dataset.page===id));
+    window.scrollTo({top:0,behavior:"smooth"});
+    if(id==="stocksPage"&&!stockRegistry.length)loadStockRegistry();
+    if(id==="ordersPage")checkExecutionOrders();
+  }
+  document.querySelectorAll(".nav-tab").forEach(b=>b.addEventListener("click",()=>switchPage(b.dataset.page)));
+  if(els.portalWalletBtn)els.portalWalletBtn.addEventListener("click",connect);
+
+  async function loadStockRegistry(){
+    try{
+      const j=await api("/api/stocks?action=registry");stockRegistry=j.assets||[];
+      qid("registryCount").textContent=`${stockRegistry.length} ASSETS`;
+      const opts=stockRegistry.map(optionHtml).join("");
+      ["stockAnalyzeSymbol","rotateSell","rotateBuy","orderStock"].forEach(id=>{const e=qid(id);if(e)e.innerHTML=opts});
+      const defaults={stockAnalyzeSymbol:"NVDA",rotateSell:"AAPL",rotateBuy:"NVDA",orderStock:"NVDA"};
+      Object.entries(defaults).forEach(([id,v])=>{const e=qid(id);if(e&&stockBySymbol(v))e.value=v});
+      if(qid("rotateBuy")&&qid("rotateBuy").value===qid("rotateSell")?.value){const alt=stockRegistry.find(x=>x.symbol!==qid("rotateSell").value);if(alt)qid("rotateBuy").value=alt.symbol;}
+      renderRegistry();renderPortfolioRows();updateRotateViz();
+      await loadMarketScanner();
+    }catch(e){if(qid("scannerStatus"))qid("scannerStatus").textContent=`REGISTRY ERROR // ${e.message||e}`;}
+  }
+  function renderRegistry(){
+    const el=qid("registryList");if(!el)return;const q=String(qid("registrySearch")?.value||"").toLowerCase();
+    const arr=stockRegistry.filter(x=>!q||`${x.symbol} ${x.name} ${x.address}`.toLowerCase().includes(q)).slice(0,90);
+    el.innerHTML=arr.map(x=>`<div class="registry-item" data-stock="${escapeHtml(x.symbol)}">${x.logoUrl?`<img src="${escapeHtml(x.logoUrl)}" alt="">`:""}<div><b>${escapeHtml(x.symbol)}</b><small>${escapeHtml(x.name)}</small></div></div>`).join("")||'<div class="result-empty">NO MATCH.</div>';
+    el.querySelectorAll("[data-stock]").forEach(r=>r.addEventListener("click",()=>{qid("stockAnalyzeSymbol").value=r.dataset.stock;switchPage("stocksPage");analyzeStockExecution(r.dataset.stock);}));
+  }
+  async function loadMarketScanner(){
+    const status=qid("scannerStatus"),list=qid("scannerList");if(!status||!list)return;
+    const q=String(qid("scannerSearch")?.value||"").trim().toUpperCase();
+    let symbols=[];
+    if(q){symbols=stockRegistry.filter(x=>x.symbol.includes(q)||x.name.toUpperCase().includes(q)).slice(0,12).map(x=>x.symbol);}
+    else{const pref=["NVDA","AAPL","TSLA","MSFT","AMZN","META","GOOGL","QQQ","SPY","PLTR","COIN","AMD"];symbols=pref.filter(x=>stockBySymbol(x));if(symbols.length<8)symbols.push(...stockRegistry.slice(0,8-symbols.length).map(x=>x.symbol));}
+    symbols=[...new Set(symbols)].slice(0,12);if(!symbols.length){list.innerHTML='<div class="result-empty">NO STOCK TOKEN MATCH.</div>';return;}
+    status.textContent="SCANNING MARKET...";list.innerHTML='<div class="loading-bar"><i></i></div>';
+    try{
+      const j=await api(`/api/stocks?action=scan&symbols=${encodeURIComponent(symbols.join(","))}`);stockScanItems=j.items||[];renderScanner();status.textContent=`${stockScanItems.length} MARKETS // LIVE`;
+    }catch(e){status.textContent="SCAN FAILED";list.innerHTML=`<div class="result-empty">${escapeHtml(e.message||e)}</div>`;}
+  }
+  function renderScanner(){
+    const list=qid("scannerList");if(!list)return;
+    list.innerHTML=stockScanItems.map(x=>`<div class="scanner-row" data-stock="${escapeHtml(x.symbol)}"><div class="stock-id">${x.logoUrl?`<img class="stock-logo" src="${escapeHtml(x.logoUrl)}" alt="">`:""}<div><b>${escapeHtml(x.symbol)}</b><small>${escapeHtml(x.name)}</small></div></div><div class="scanner-num"><b>${money(x.market?.fairValue)}</b><small>FAIR TOKEN VALUE</small></div><div class="scanner-num"><b>${num(x.market?.spreadBps).toFixed(2)} bps</b><small>SPREAD</small></div><div class="score-pill ${scoreClass(x.marketQuality?.score||0)}">${x.marketQuality?.score||0}/100</div></div>`).join("")||'<div class="result-empty">NO MARKET DATA.</div>';
+    list.querySelectorAll("[data-stock]").forEach(r=>r.addEventListener("click",()=>{qid("stockAnalyzeSymbol").value=r.dataset.stock;analyzeStockExecution(r.dataset.stock);}));
+  }
+  function scoreMarkup(j){
+    const s=j.glitchScore||{},c=s.components||{},ex=j.execution||{},f=j.fair||{};
+    return `<div class="score-big"><div><span>GLITCH SCORE</span><strong>${s.score??"--"}</strong></div><div style="text-align:right"><b>${escapeHtml(s.verdict||"--")}</b><span style="display:block;margin-top:5px">EXECUTION QUALITY</span></div></div><div class="score-components"><div class="score-component"><small>PRICE QUALITY</small><b>${c.priceQuality??"--"}/100</b></div><div class="score-component"><small>GAS EFFICIENCY</small><b>${c.gasEfficiency??"--"}/100</b></div><div class="score-component"><small>SPREAD QUALITY</small><b>${c.spreadQuality??"--"}/100</b></div><div class="score-component"><small>MARKET QUALITY</small><b>${c.marketQuality??"--"}/100</b></div></div><div class="metric-list"><div class="metric"><span>FAIR TOKEN VALUE</span><b>${money(f.value)}</b></div><div class="metric"><span>EXECUTABLE PRICE</span><b>${money(ex.effectivePrice)}</b></div><div class="metric ${num(ex.deviationPct)<=0.25?"good":"bad"}"><span>EXECUTION DEVIATION</span><b>${pct(ex.deviationPct)}</b></div><div class="metric"><span>EST. USER GAS</span><b>${money(ex.gasUsd)}</b></div><div class="metric"><span>BEST ROUTE</span><b>${escapeHtml(ex.label||"--")}</b></div></div>`;
+  }
+  async function analyzeStockExecution(symbol=qid("stockAnalyzeSymbol")?.value){
+    const box=qid("stockScoreBox"),btn=qid("tradeStockBtn"),state=qid("stockDetailState");if(!box)return;
+    const x=stockBySymbol(symbol);if(!x)return;
+    if(!account){box.innerHTML='<div class="result-empty">CONNECT A HOLDER WALLET TO RUN EXECUTABLE ROUTE ANALYSIS.</div>';btn.disabled=true;return;}
+    if(!holderState.eligible){box.innerHTML='<div class="result-empty">DEAD PIXELS HOLDER ACCESS REQUIRED FOR EXECUTABLE QUOTES.</div>';btn.disabled=true;return;}
+    const amt=num(qid("stockAnalyzeAmount")?.value);if(!(amt>0))return;
+    state.textContent="ANALYZING...";box.innerHTML='<div class="loading-bar"><i></i></div>';btn.disabled=true;
+    try{
+      const j=await api(`/api/stocks?action=execution&symbol=${encodeURIComponent(symbol)}&wallet=${encodeURIComponent(account)}&side=buy&amount=${encodeURIComponent(amt)}`);selectedStockAnalysis=j;box.innerHTML=scoreMarkup(j);
+      const max=num(qid("stockShieldMax")?.value,.25),pass=num(j.execution?.adverseDeviationPct,999)<=max&&!j.fair?.isTradingHalt;
+      box.insertAdjacentHTML("beforeend",`<div class="shield ${pass?"pass":"block"}"><div class="shield-head"><span>FAIR VALUE SHIELD</span><b>${pass?"PASS // EXECUTION ALLOWED":"BLOCKED // DEVIATION TOO HIGH"}</b></div><small>MAX ${max.toFixed(3)}% // CURRENT ${num(j.execution?.adverseDeviationPct).toFixed(3)}%</small></div>`);
+      btn.disabled=!pass;state.textContent=`${j.symbol} // ${j.glitchScore?.verdict||"READY"}`;
+    }catch(e){box.innerHTML=`<div class="result-empty">ANALYSIS ERROR // ${escapeHtml(e.message||e)}</div>`;state.textContent="ERROR";}
+  }
+  async function loadIntoRouter(sell,buy,amount){
+    if(!sell||!buy)return;switchPage("routerPage");
+    function setSide(side,t){
+      const sel=side==="sell"?els.sellToken:els.buyToken,input=side==="sell"?els.sellCustom:els.buyCustom;
+      const known=Object.keys(TOKENS).find(k=>TOKENS[k].address&&TOKENS[k].address.toLowerCase()===t.address.toLowerCase());
+      if(known){sel.value=known;if(side==="sell")customSell=null;else customBuy=null;}
+      else{sel.value="CUSTOM";input.value=t.address;if(side==="sell")customSell={...t};else customBuy={...t};}
+    }
+    setSide("sell",sell);setSide("buy",buy);els.sellAmount.value=String(amount);selectedQuote=null;quotes=[];els.buyAmount.textContent="0.0";updateCustomUI();await updateBalance();scheduleQuote(100);updateAction();
+  }
+  async function tradeSelectedStock(){const j=selectedStockAnalysis;if(!j)return;await loadIntoRouter(TOKENS.USDG,stockToken(j.symbol),j.amount);}
+
+  function updateRotateViz(){stockVisual(qid("rotateSellViz"),qid("rotateSell")?.value);stockVisual(qid("rotateBuyViz"),qid("rotateBuy")?.value);}
+  async function analyzeRotation(){
+    const box=qid("rotateResult"),metrics=qid("rotateMetrics"),btn=qid("rotateTradeBtn");if(!box)return;
+    const a=qid("rotateSell").value,b=qid("rotateBuy").value,amount=num(qid("rotateAmount").value);if(a===b||!(amount>0)){box.innerHTML='<div class="result-empty">SELECT TWO DIFFERENT STOCK TOKENS.</div>';return;}
+    if(!account||!holderState.eligible){box.innerHTML='<div class="result-empty">CONNECT A DEAD PIXELS HOLDER WALLET TO ANALYZE EXECUTION.</div>';return;}
+    box.innerHTML='<div class="loading-bar"><i></i></div>';btn.disabled=true;
+    try{
+      const [m,q]=await Promise.all([api(`/api/stocks?action=scan&symbols=${encodeURIComponent(a+","+b)}`),api(`/api/quote?sellToken=${encodeURIComponent(stockToken(a).address)}&buyToken=${encodeURIComponent(stockToken(b).address)}&sellAmount=${encodeURIComponent(parseUnits(String(amount),18))}&taker=${encodeURIComponent(account)}&slippageBps=50&provider=all`)]);
+      const ma=(m.items||[]).find(x=>x.symbol===a),mb=(m.items||[]).find(x=>x.symbol===b),best=(q.quotes||[])[0];if(!ma||!mb||!best)throw new Error("NO EXECUTABLE ROTATION");
+      const expected=amount*ma.market.fairValue/mb.market.fairValue,actual=num(formatUnits(best.buyAmount,18)),shortfall=(1-actual/expected)*100,adverse=Math.max(0,shortfall),gas=num(best.gasUsd),notional=amount*ma.market.fairValue;
+      const score=Math.max(0,Math.min(100,Math.round(100-adverse*42-(notional>0?gas/notional*100*25:0))));rotateAnalysis={a,b,amount,expected,actual,shortfall,adverse,gas,score,best};
+      const shield=num(qid("rotateShield").value,.3),pass=adverse<=shield;
+      box.innerHTML=`<div class="result-head"><b>${escapeHtml(a)} → ${escapeHtml(b)}</b><span>GLITCH SCORE ${score}/100</span></div><div class="metric-list"><div class="metric"><span>FAIR CROSS OUTPUT</span><b>${expected.toFixed(6)} ${escapeHtml(b)}</b></div><div class="metric"><span>EXECUTABLE OUTPUT</span><b>${actual.toFixed(6)} ${escapeHtml(b)}</b></div><div class="metric ${pass?"good":"bad"}"><span>EXECUTION SHORTFALL</span><b>${pct(shortfall)}</b></div><div class="metric"><span>EST. USER GAS</span><b>${money(gas)}</b></div></div><div class="shield ${pass?"pass":"block"}"><div class="shield-head"><span>FAIR VALUE SHIELD</span><b>${pass?"PASS":"BLOCKED"}</b></div><small>MAX ${shield.toFixed(3)}% // ADVERSE ${adverse.toFixed(3)}%</small></div>`;
+      metrics.innerHTML=`<div class="metric"><span>${escapeHtml(a)} FAIR VALUE</span><b>${money(ma.market.fairValue)}</b></div><div class="metric"><span>${escapeHtml(b)} FAIR VALUE</span><b>${money(mb.market.fairValue)}</b></div><div class="metric"><span>POSITION VALUE</span><b>${money(notional)}</b></div><div class="metric"><span>ROUTE</span><b>${escapeHtml(best.label||"--")}</b></div><div class="metric"><span>PROTOCOL FEE</span><b>0%</b></div>`;
+      btn.disabled=!pass;
+    }catch(e){box.innerHTML=`<div class="result-empty">ROTATION ERROR // ${escapeHtml(e.message||e)}</div>`;}
+  }
+
+  function freshPortfolioDefaults(){const pref=["NVDA","AAPL","MSFT","GOOGL"].filter(x=>stockBySymbol(x));const fallback=stockRegistry.slice(0,4).map(x=>x.symbol);const syms=[...new Set([...pref,...fallback])].slice(0,4);const weights=[35,25,25,15];portfolioRowsState=syms.map((symbol,i)=>({id:Date.now()+i,symbol,weight:weights[i]||0}));}
+  function renderPortfolioRows(){
+    const el=qid("portfolioRows");if(!el||!stockRegistry.length)return;if(!portfolioRowsState.length)freshPortfolioDefaults();
+    el.innerHTML=portfolioRowsState.map((r,i)=>`<div class="portfolio-row" data-row="${r.id}"><label class="field"><small>ASSET ${i+1}</small><select class="portal-select portfolio-symbol">${stockRegistry.map(x=>`<option value="${escapeHtml(x.symbol)}" ${x.symbol===r.symbol?"selected":""}>${escapeHtml(x.symbol)} // ${escapeHtml(x.name)}</option>`).join("")}</select></label><label class="field"><small>TARGET %</small><input class="portal-input portfolio-weight" value="${r.weight}" inputmode="decimal"></label><button class="remove-row" title="Remove">×</button></div>`).join("");
+    el.querySelectorAll("[data-row]").forEach(row=>{const id=Number(row.dataset.row),st=portfolioRowsState.find(x=>x.id===id);row.querySelector(".portfolio-symbol").addEventListener("change",e=>{st.symbol=e.target.value;});row.querySelector(".portfolio-weight").addEventListener("input",e=>{st.weight=num(e.target.value);updateWeightSum();});row.querySelector(".remove-row").addEventListener("click",()=>{portfolioRowsState=portfolioRowsState.filter(x=>x.id!==id);renderPortfolioRows();});});updateWeightSum();
+  }
+  function updateWeightSum(){const sum=portfolioRowsState.reduce((a,x)=>a+num(x.weight),0);if(qid("weightSum")){qid("weightSum").textContent=`${sum.toFixed(2)}%`;qid("weightSum").style.color=Math.abs(sum-100)<.01?"var(--acid)":"#ff6680";}}
+  function validPortfolio(){const sum=portfolioRowsState.reduce((a,x)=>a+num(x.weight),0);if(Math.abs(sum-100)>.01)throw new Error("TARGET WEIGHTS MUST TOTAL 100%");const unique=new Set(portfolioRowsState.map(x=>x.symbol));if(unique.size!==portfolioRowsState.length)throw new Error("DUPLICATE ASSET IN PORTFOLIO");if(portfolioRowsState.length<2)throw new Error("ADD AT LEAST TWO ASSETS");}
+  function renderPlan(){const el=qid("portfolioPlan");if(!el)return;qid("planCount").textContent=`${portfolioPlanState.length} STEPS`;el.innerHTML=portfolioPlanState.length?portfolioPlanState.map((x,i)=>`<div class="plan-step"><div class="step-no">${String(i+1).padStart(2,"0")}</div><div><b>${escapeHtml(x.sell.symbol)} → ${escapeHtml(x.buy.symbol)}</b><small>${escapeHtml(String(x.amount))} ${escapeHtml(x.sell.symbol)} // ~${money(x.usd)} VALUE</small></div><button data-plan-step="${i}">LOAD ROUTE</button></div>`).join(""):'<div class="result-empty">NO PORTFOLIO PLAN GENERATED.</div>';el.querySelectorAll("[data-plan-step]").forEach(b=>b.addEventListener("click",()=>{const x=portfolioPlanState[Number(b.dataset.planStep)];loadIntoRouter(x.sell,x.buy,x.amount);}));}
+  async function buildNewPortfolio(){
+    try{validPortfolio();const cap=num(qid("portfolioCapital").value);if(!(cap>0))throw new Error("INVALID CAPITAL");portfolioPlanState=portfolioRowsState.map(r=>({sell:TOKENS.USDG,buy:stockToken(r.symbol),amount:(cap*r.weight/100).toFixed(6),usd:cap*r.weight/100,type:"BUY"}));renderPlan();qid("portfolioStatus").textContent=`NEW PORTFOLIO PLAN READY // ${money(cap)} USDG // ${portfolioPlanState.length} WALLET-CONFIRMED STEPS`;}
+    catch(e){qid("portfolioStatus").textContent=`PLAN ERROR // ${e.message||e}`;}
+  }
+  async function arbitraryBalance(t){if(!account)return 0;const data="0x70a08231"+padAddress(account);const raw=await rpc("eth_call",[{to:t.address,data},"latest"]);return num(formatUnits(BigInt(raw||"0x0"),t.decimals,12));}
+  async function rebalancePortfolio(){
+    try{
+      validPortfolio();if(!account)throw new Error("CONNECT WALLET");qid("portfolioStatus").textContent="SCANNING WALLET BALANCES + FAIR VALUES...";
+      const syms=portfolioRowsState.map(x=>x.symbol);const m=await api(`/api/stocks?action=scan&symbols=${encodeURIComponent(syms.join(","))}`);const map=new Map((m.items||[]).map(x=>[x.symbol,x]));
+      const vals=[];for(const r of portfolioRowsState){const t=stockToken(r.symbol),bal=await arbitraryBalance(t),price=map.get(r.symbol)?.market?.fairValue;if(!(price>0))throw new Error(`NO FAIR VALUE FOR ${r.symbol}`);vals.push({...r,t,balance:bal,price,value:bal*price});}
+      const total=vals.reduce((a,x)=>a+x.value,0);if(!(total>0))throw new Error("NO SELECTED STOCK TOKEN BALANCE FOUND");
+      const sellers=vals.map(x=>({...x,delta:x.value-total*x.weight/100})).filter(x=>x.delta>1).sort((a,b)=>b.delta-a.delta);const buyers=vals.map(x=>({...x,need:total*x.weight/100-x.value})).filter(x=>x.need>1).sort((a,b)=>b.need-a.need);
+      const plan=[];let si=0,bi=0;while(si<sellers.length&&bi<buyers.length){const s=sellers[si],b=buyers[bi],usd=Math.min(s.delta,b.need);if(usd<=.5)break;const amt=usd/s.price;plan.push({sell:s.t,buy:b.t,amount:amt.toFixed(10).replace(/0+$/,"").replace(/\.$/,""),usd,type:"ROTATE"});s.delta-=usd;b.need-=usd;if(s.delta<=1)si++;if(b.need<=1)bi++;}
+      portfolioPlanState=plan;renderPlan();qid("portfolioStatus").textContent=`REBALANCE READY // SELECTED VALUE ${money(total)} // ${plan.length} DIRECT ROTATION STEP${plan.length===1?"":"S"}`;
+    }catch(e){qid("portfolioStatus").textContent=`REBALANCE ERROR // ${e.message||e}`;}
+  }
+
+  function loadOrders(){try{const a=JSON.parse(localStorage.getItem(ORDER_STORE)||"[]");executionOrders=Array.isArray(a)?a.slice(0,10):[];}catch{executionOrders=[]}renderOrders();}
+  function saveOrders(){localStorage.setItem(ORDER_STORE,JSON.stringify(executionOrders));renderOrders();}
+  function orderReady(o,j){
+    if(!j)return false;const fair=num(j.fair?.value),dev=j.execution?.adverseDeviationPct==null?999:num(j.execution.adverseDeviationPct),score=num(j.glitchScore?.score),gas=j.execution?.gasUsd==null?999:num(j.execution.gasUsd);let priceOk=true;
+    if(num(o.targetPrice)>0)priceOk=o.side==="buy"?fair<=num(o.targetPrice):fair>=num(o.targetPrice);
+    return priceOk&&dev<=num(o.maxDeviation,.25)&&score>=num(o.minScore,90)&&gas<=num(o.maxGas,.25)&&!j.fair?.isTradingHalt;
+  }
+  function renderOrders(){
+    const el=qid("ordersList");if(!el)return;qid("ordersCount").textContent=`${executionOrders.length} ACTIVE`;
+    if(!executionOrders.length){el.innerHTML='<div class="result-empty">NO EXECUTION ORDERS ARMED.</div>';return;}
+    el.innerHTML=executionOrders.map(o=>{const j=o.last||{},ready=o.state==="READY";return `<div class="order-card ${ready?"ready":o.state==="ERROR"?"error":""}"><div class="order-head"><b>${escapeHtml(o.side.toUpperCase())} ${escapeHtml(o.symbol)}</b><span class="order-state">${escapeHtml(o.state||"WAITING")}</span></div><div class="order-meta"><div><small>AMOUNT</small><b>${escapeHtml(String(o.amount))} ${o.side==="buy"?"USDG":escapeHtml(o.symbol)}</b></div><div><small>FAIR PRICE</small><b>${j.fair?money(j.fair.value):"--"}</b></div><div><small>DEVIATION</small><b>${j.execution?pct(j.execution.adverseDeviationPct):"--"}</b></div><div><small>GLITCH SCORE</small><b>${j.glitchScore?.score??"--"}</b></div></div><div class="order-actions">${ready?`<button class="ready-btn" data-order-load="${o.id}">LOAD & EXECUTE</button>`:""}<button data-order-check="${o.id}">CHECK NOW</button><button data-order-cancel="${o.id}">CANCEL</button></div></div>`}).join("");
+    el.querySelectorAll("[data-order-cancel]").forEach(b=>b.addEventListener("click",()=>{executionOrders=executionOrders.filter(x=>x.id!==b.dataset.orderCancel);saveOrders();}));
+    el.querySelectorAll("[data-order-check]").forEach(b=>b.addEventListener("click",()=>checkOneOrder(executionOrders.find(x=>x.id===b.dataset.orderCheck),true)));
+    el.querySelectorAll("[data-order-load]").forEach(b=>b.addEventListener("click",()=>{const o=executionOrders.find(x=>x.id===b.dataset.orderLoad);if(!o)return;const stock=stockToken(o.symbol);loadIntoRouter(o.side==="buy"?TOKENS.USDG:stock,o.side==="buy"?stock:TOKENS.USDG,o.amount);}));
+  }
+  async function checkOneOrder(o,manual=false){
+    if(!o||!account||!holderState.eligible)return;try{o.state="CHECKING";if(manual)renderOrders();const j=await api(`/api/stocks?action=execution&symbol=${encodeURIComponent(o.symbol)}&wallet=${encodeURIComponent(account)}&side=${o.side}&amount=${encodeURIComponent(o.amount)}`);o.last=j;o.lastChecked=Date.now();o.state=orderReady(o,j)?"READY":"WAITING";saveOrders();if(o.state==="READY")qid("orderStatus").textContent=`READY // ${o.side.toUpperCase()} ${o.symbol} CONDITIONS MET // WALLET CONFIRMATION REQUIRED`;}
+    catch(e){o.state="ERROR";o.error=e.message||String(e);saveOrders();}}
+  async function checkExecutionOrders(){if(!account||!holderState.eligible||!executionOrders.length)return;for(const o of executionOrders.slice(0,6))await checkOneOrder(o,false);}
+  function armOrder(){
+    const side=qid("orderSide").value,symbol=qid("orderStock").value,amount=num(qid("orderAmount").value);if(!(amount>0))return qid("orderStatus").textContent="INVALID ORDER AMOUNT";
+    const o={id:`${Date.now()}-${Math.random().toString(16).slice(2,8)}`,side,symbol,amount,targetPrice:num(qid("orderTargetPrice").value),maxDeviation:num(qid("orderMaxDeviation").value,.25),minScore:num(qid("orderMinScore").value,90),maxGas:num(qid("orderMaxGas").value,.25),state:"WAITING",createdAt:Date.now(),last:null};executionOrders.unshift(o);executionOrders=executionOrders.slice(0,10);saveOrders();qid("orderStatus").textContent=`ARMED // ${side.toUpperCase()} ${symbol} // CHECKING EVERY ~20 SECONDS WHILE PORTAL IS OPEN`;checkOneOrder(o,true);
+  }
+
+  qid("registrySearch")?.addEventListener("input",renderRegistry);qid("scannerSearch")?.addEventListener("change",loadMarketScanner);qid("refreshScanner")?.addEventListener("click",loadMarketScanner);qid("analyzeStockBtn")?.addEventListener("click",()=>analyzeStockExecution());qid("tradeStockBtn")?.addEventListener("click",tradeSelectedStock);qid("stockAnalyzeSymbol")?.addEventListener("change",()=>{selectedStockAnalysis=null;qid("tradeStockBtn").disabled=true;});qid("stockShieldMax")?.addEventListener("change",()=>selectedStockAnalysis&&analyzeStockExecution());
+  [qid("rotateSell"),qid("rotateBuy")].forEach(e=>e?.addEventListener("change",()=>{updateRotateViz();rotateAnalysis=null;qid("rotateTradeBtn").disabled=true;}));qid("rotateAnalyzeBtn")?.addEventListener("click",analyzeRotation);qid("rotateTradeBtn")?.addEventListener("click",()=>rotateAnalysis&&loadIntoRouter(stockToken(rotateAnalysis.a),stockToken(rotateAnalysis.b),rotateAnalysis.amount));
+  qid("addPortfolioRow")?.addEventListener("click",()=>{if(portfolioRowsState.length>=8)return;const used=new Set(portfolioRowsState.map(x=>x.symbol)),next=stockRegistry.find(x=>!used.has(x.symbol));if(next){portfolioRowsState.push({id:Date.now(),symbol:next.symbol,weight:0});renderPortfolioRows();}});qid("buildPlanBtn")?.addEventListener("click",buildNewPortfolio);qid("rebalanceBtn")?.addEventListener("click",rebalancePortfolio);
+  qid("orderSide")?.addEventListener("change",()=>{qid("orderAmountLabel").textContent=qid("orderSide").value==="buy"?"AMOUNT // USDG":"AMOUNT // STOCK TOKEN";});qid("armOrderBtn")?.addEventListener("click",armOrder);
+  loadOrders();setInterval(checkExecutionOrders,20000);
+
   els.walletBtn.addEventListener("click",connect);
   els.actionBtn.addEventListener("click",()=>{if(!account)connect(); else if(!selectedQuote)getQuote(); else execute();});
   els.sellAmount.addEventListener("input",()=>{selectedQuote=null;updateAction();scheduleQuote()});
@@ -1112,13 +1158,14 @@ a{color:inherit}
   }));
 
   if(window.ethereum){
-    ethereum.on?.("accountsChanged",async a=>{account=a?.[0]||null;if(account){els.walletBtn.textContent=short(account);els.walletBtn.classList.add("connected")}else{els.walletBtn.textContent="CONNECT WALLET";els.walletBtn.classList.remove("connected")}selectedQuote=null;await updateBalance();await checkHolder();updateAction();});
+    ethereum.on?.("accountsChanged",async a=>{account=a?.[0]||null;if(account){els.walletBtn.textContent=short(account);els.walletBtn.classList.add("connected");if(els.portalWalletBtn){els.portalWalletBtn.textContent=short(account);els.portalWalletBtn.classList.add("connected")}}else{els.walletBtn.textContent="CONNECT WALLET";els.walletBtn.classList.remove("connected");if(els.portalWalletBtn){els.portalWalletBtn.textContent="CONNECT";els.portalWalletBtn.classList.remove("connected")}}selectedQuote=null;await updateBalance();await checkHolder();updateAction();});
     ethereum.on?.("chainChanged",()=>location.reload());
-    ethereum.request({method:"eth_accounts"}).then(async a=>{if(a?.[0]){account=a[0];els.walletBtn.textContent=short(account);els.walletBtn.classList.add("connected");await updateBalance();updateAction();}}).catch(()=>{});
+    ethereum.request({method:"eth_accounts"}).then(async a=>{if(a?.[0]){account=a[0];els.walletBtn.textContent=short(account);els.walletBtn.classList.add("connected");if(els.portalWalletBtn){els.portalWalletBtn.textContent=short(account);els.portalWalletBtn.classList.add("connected");}await updateBalance();await checkHolder();updateAction();}}).catch(()=>{});
   }
   applyHolderGate();
   updateAction();
   loadTokenCatalog();
+  loadStockRegistry();
 
   // Black-hole field inherited from the original DEAD PIXELS portal identity.
   const canvas=document.getElementById("voidCanvas"),ctx=canvas.getContext("2d",{alpha:false});
@@ -1146,23 +1193,5 @@ a{color:inherit}
   addEventListener("resize",resize);resize();draw();
 })();
 </script>
-
-<script>
-(() => {
-  document.querySelectorAll('a[href^="#"]').forEach(a=>{
-    a.addEventListener("click",e=>{
-      const t=document.querySelector(a.getAttribute("href"));
-      if(t){e.preventDefault();t.scrollIntoView({behavior:"smooth",block:"start"});}
-    });
-  });
-  document.querySelectorAll(".launch-type,.pad-action").forEach(el=>{
-    el.addEventListener("mouseenter",()=>{
-      const zone=document.querySelector(".pad-shell");
-      if(zone){zone.style.transform="translateX(1px)";setTimeout(()=>zone.style.transform="",70);}
-    });
-  });
-})();
-</script>
-
 </body>
 </html>

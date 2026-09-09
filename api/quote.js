@@ -7,6 +7,7 @@ const {
   toHex
 } = require("viem");
 const { deadPixelsBalance } = require("../lib/holder");
+const { getAssets: getStockAssets, getPrice: getStockPrice } = require("../lib/stocks");
 
 const CHAIN_ID = 4663;
 const NATIVE = "0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee";
@@ -144,9 +145,24 @@ async function getTokenMap(){
 async function tokenInfo(address){
   const map=await getTokenMap();
   const a=address.toLowerCase();
-  if(map.has(a)) return map.get(a);
-  if(a===NATIVE && map.has(WETH.toLowerCase())) return map.get(WETH.toLowerCase());
-  return null;
+  const base=map.get(a)||null;
+  if(base && Number(base.priceUSD||0)>0) return base;
+  if(a===NATIVE && map.has(WETH.toLowerCase())){
+    const w=map.get(WETH.toLowerCase());
+    if(Number(w?.priceUSD||0)>0) return w;
+  }
+  // Stock Tokens may exist in aggregator catalogs without a usable USD price.
+  // Fall back to Robinhood's official Stock Token registry + market reference
+  // so BEST NET ranking can still account for output value and gas.
+  try{
+    const assets=await getStockAssets();
+    const stock=assets.find(x=>x.address.toLowerCase()===a);
+    if(stock){
+      const px=await getStockPrice(stock.symbol,stock);
+      return {...(base||{}),address:a,decimals:18,symbol:stock.symbol,priceUSD:px.fairValue,rwa:true};
+    }
+  }catch{}
+  return base;
 }
 async function ethPriceUsd(){
   const map=await getTokenMap();
