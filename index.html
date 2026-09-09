@@ -145,15 +145,49 @@ a{color:inherit}
 }
 
 /* ===== PORTAL V3.5 // UNIFIED UI ===== */
-.chrome{height:64px;padding:0 14px;gap:12px}
-.portal-nav{display:flex;align-items:center;gap:5px;flex:1;justify-content:center;min-width:0;overflow-x:auto;scrollbar-width:none}
+.chrome{height:76px;padding:0 18px;gap:16px}
+.brand{font-size:10px;letter-spacing:.13em}
+.portal-nav{display:flex;align-items:center;gap:8px;flex:1;justify-content:center;min-width:0;overflow-x:auto;scrollbar-width:none;padding:6px 0}
 .portal-nav::-webkit-scrollbar{display:none}
-.nav-tab{flex:0 0 auto;border:1px solid #2f2f2b;background:#070707;color:#77776f;padding:7px 8px;font-size:7px;letter-spacing:.08em;text-transform:uppercase;white-space:nowrap}
-.nav-tab:hover{color:#e5e4dc;border-color:#55554f}.nav-tab.active{color:#000;background:var(--acid);border-color:var(--acid);font-weight:900}.nav-tab.next{color:#9b8a8e;border-color:#43383b}
-.chrome-right{display:flex;align-items:center;gap:8px}.global-wallet{border:1px solid #40403b;background:#0b0b0a;color:#d8d7cf;padding:7px 9px;font-size:8px;white-space:nowrap}.global-wallet.connected{color:var(--acid);border-color:#536c19}
+.nav-tab{
+  flex:0 0 auto;
+  min-height:42px;
+  border:1px solid #363631;
+  background:#070707;
+  color:#9a9a92;
+  padding:11px 15px;
+  font-size:11px;
+  font-weight:800;
+  line-height:1;
+  letter-spacing:.075em;
+  text-transform:uppercase;
+  white-space:nowrap;
+  transition:color .15s,border-color .15s,background .15s,transform .15s;
+}
+.nav-tab:hover{color:#f0efe7;border-color:#6b6b62;transform:translateY(-1px)}
+.nav-tab.active{
+  color:#000;
+  background:var(--acid);
+  border-color:var(--acid);
+  font-weight:900;
+  box-shadow:0 0 18px rgba(195,255,35,.11);
+}
+.nav-tab.next{color:#b5a2a7;border-color:#514247}
+.chrome-right{display:flex;align-items:center;gap:10px}
+.global-wallet{
+  min-height:42px;
+  border:1px solid #454540;
+  background:#0b0b0a;
+  color:#d8d7cf;
+  padding:10px 12px;
+  font-size:9px;
+  font-weight:800;
+  white-space:nowrap;
+}
+.global-wallet.connected{color:var(--acid);border-color:#536c19}
 .portal-page{position:relative;z-index:10}.portal-page:not(.active){display:none!important}
-#routerPage{padding-top:98px}
-.module-page{min-height:100svh;padding:96px 22px 76px;max-width:1220px;margin:0 auto}
+#routerPage{padding-top:110px}
+.module-page{min-height:100svh;padding:108px 22px 76px;max-width:1220px;margin:0 auto}
 .module-head{display:grid;grid-template-columns:1fr auto;gap:24px;align-items:end;padding:12px 0 22px;border-bottom:1px solid #2b2b28;margin-bottom:14px}
 .module-kicker{font-size:8px;letter-spacing:.18em;color:#73736c;margin-bottom:8px}.module-head h1{font-family:Arial Black,Impact,sans-serif;font-size:clamp(42px,6.4vw,82px);line-height:.82;letter-spacing:-.065em;margin:0}.module-head h1 em{font-style:normal;color:var(--acid)}
 .module-head p{max-width:580px;color:#999990;font:11px/1.65 Arial,sans-serif;margin:15px 0 0}.module-version{border:1px solid #536c19;color:var(--acid);padding:9px 10px;font-size:8px;letter-spacing:.1em;background:rgba(195,255,35,.035);text-align:right}
@@ -172,7 +206,23 @@ a{color:inherit}
 .pad-preview{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}.pad-card{min-height:150px;border:1px solid #30302d;background:linear-gradient(145deg,rgba(195,255,35,.035),#060606 45%);padding:13px;position:relative}.pad-card span{font-size:24px;color:#55554e}.pad-card b{display:block;margin-top:35px;font-size:10px}.pad-card small{display:block;color:#62625c;font-size:7px;margin-top:5px}.coming-bar{margin-top:10px;border:1px solid #536c19;color:var(--acid);padding:11px;text-align:center;font-size:9px;letter-spacing:.12em;background:rgba(195,255,35,.035)}
 .loading-bar{height:2px;background:#20201e;overflow:hidden;margin-top:8px}.loading-bar i{display:block;height:100%;width:35%;background:var(--acid);animation:scanLoad 1.1s linear infinite}@keyframes scanLoad{from{transform:translateX(-120%)}to{transform:translateX(350%)}}
 @media(max-width:1050px){.brand span.brand-long{display:none}.net{display:none}.module-grid{grid-template-columns:1fr}.registry-list{grid-template-columns:repeat(2,1fr)}}
-@media(max-width:760px){.chrome{height:102px;align-items:flex-start;padding-top:10px;flex-wrap:wrap}.brand{height:27px}.chrome-right{margin-left:auto;height:27px}.portal-nav{order:3;width:100%;justify-content:flex-start}.module-page{padding:124px 10px 65px}#routerPage{padding-top:132px}.module-head{grid-template-columns:1fr}.module-version{text-align:left;width:max-content}.field-grid,.field-grid.three{grid-template-columns:1fr 1fr}.scanner-row{grid-template-columns:1fr 88px 60px}.scanner-row .scanner-num:nth-child(3){display:none}.pad-preview{grid-template-columns:1fr 1fr}.order-meta{grid-template-columns:1fr 1fr}}
+@media(max-width:760px){
+ .chrome{height:118px;align-items:flex-start;padding:10px 10px 0;flex-wrap:wrap;gap:6px}
+ .brand{height:30px;font-size:9px}
+ .chrome-right{margin-left:auto;height:30px}
+ .global-wallet{min-height:30px;padding:7px 9px;font-size:8px}
+ .portal-nav{order:3;width:100%;justify-content:flex-start;gap:7px;padding:7px 0 10px}
+ .nav-tab{min-height:38px;padding:10px 13px;font-size:10px}
+ .module-page{padding:140px 10px 65px}
+ #routerPage{padding-top:148px}
+ .module-head{grid-template-columns:1fr}
+ .module-version{text-align:left;width:max-content}
+ .field-grid,.field-grid.three{grid-template-columns:1fr 1fr}
+ .scanner-row{grid-template-columns:1fr 88px 60px}
+ .scanner-row .scanner-num:nth-child(3){display:none}
+ .pad-preview{grid-template-columns:1fr 1fr}
+ .order-meta{grid-template-columns:1fr 1fr}
+}
 @media(max-width:500px){.field-grid,.field-grid.three{grid-template-columns:1fr}.registry-list{grid-template-columns:1fr}.scanner-row{grid-template-columns:1fr 82px}.scanner-row .scanner-num:nth-child(3){display:none}.score-components{grid-template-columns:1fr 1fr}.rotate-viz{grid-template-columns:1fr 36px 1fr}.pad-preview{grid-template-columns:1fr}.portfolio-row{grid-template-columns:1fr 80px 34px}}
 
 </style>
@@ -184,7 +234,7 @@ a{color:inherit}
 <div class="glitchline"></div>
 
 <header class="chrome">
-  <div class="brand"><span class="sig"></span><span class="brand-long">DEAD PIXELS LABS // </span>PORTAL V3.5</div>
+  <div class="brand"><span class="sig"></span><span class="brand-long">DEAD PIXELS LABS // </span>PORTAL V3.5.2</div>
   <nav class="portal-nav" aria-label="Portal modules">
     <button class="nav-tab active" data-page="routerPage">01 ROUTER</button>
     <button class="nav-tab" data-page="stocksPage">02 STOCK ENGINE</button>
@@ -213,7 +263,7 @@ a{color:inherit}
 
   <section class="swap-shell">
     <div class="windowbar">
-      <span>GLITCH_SWAP.EXE // V3.5 CORE</span>
+      <span>GLITCH_SWAP.EXE // V3.5.2 CORE</span>
       <span class="dots"><i></i><i></i><i></i></span>
     </div>
     <div class="swap">
@@ -379,7 +429,7 @@ a{color:inherit}
   <div class="coming-bar">GLITCH PAD // COMING NEXT WEEK // PREVIEW ONLY</div>
 </main>
 
-<div class="footerline"><span>ERROR MAKES US UNIQUE.</span><span>PORTAL V3.5 // UNIFIED EXECUTION OS</span></div>
+<div class="footerline"><span>ERROR MAKES US UNIQUE.</span><span>PORTAL V3.5.2 // UNIFIED EXECUTION OS</span></div>
 
 <script>
 (() => {
