@@ -1,129 +1,118 @@
-# DEAD PIXELS // GLITCH ROUTER V6
-## NORDSTERN + HOLDER GATE
+# GLITCH ROUTER V2 — MICRO GAS ENGINE
 
-**Only DEAD PIXELS holders can obtain executable swap quotes through this portal.**
+This build keeps the DEAD PIXELS holder gate and adds two extra gas-minimizing
+Uniswap execution paths for native ETH input trades.
 
-DEAD PIXELS NFT:
-`0x27390fe7ae676fbfdb632e61cd4019996b07892c`
+## Why V2 exists
 
-Minimum:
-`1 NFT`
+In live comparison screenshots, the official Uniswap app sent an ETH → NVDA
+transaction to Robinhood Chain's official **Universal Router**:
 
-## Routing stack
+`0x8876789976decbfcbbbe364623c63652db8c0904`
+
+GLITCH ROUTER V1 was sending its direct V3 execution to **SwapRouter02**:
+
+`0xcaf681a66d020601342297493863e78c959e5cb2`
+
+Those are different execution contracts. V2 now simulates both styles instead
+of assuming SwapRouter02 is always the cheapest execution.
+
+## V2 routing stack
 
 Special case:
 
 ```text
 ETH ↔ WETH
-→ direct WETH deposit()/withdraw()
+→ WETH deposit()/withdraw() directly
 ```
 
-All other routable pairs:
+For native ETH input trades:
 
 ```text
+UNISWAP UNIVERSAL ROUTER // V3 micro-route
+UNISWAP V2 DIRECT
 NORDSTERN DIRECT
-UNISWAP DIRECT V3
+UNISWAP V3 / SwapRouter02
 LI.FI
         ↓
-compare output + estimated gas + provider fee
+SIMULATE GAS + OUTPUT
         ↓
 BEST NET OUTPUT
 ```
 
-DEAD PIXELS protocol fee:
-`0 bps`
+For ERC-20 input trades, V1 routes remain active. Universal Router native mode
+is intentionally limited to ETH input because ERC-20 Universal Router flows
+normally introduce Permit2 approval/signature semantics; adding that blindly
+would defeat the gas-minimization goal.
+
+## Additional gas optimization
+
+Robinhood Chain uses first-come, first-served sequencing: paying a higher
+priority fee cannot jump ahead in the queue.
+
+For GLITCH ROUTER's own constructed transactions, V2 uses the RPC's current
+accepted gas price plus a 1% safety cushion. This avoids intentionally bidding
+an oversized priority margin. Provider-built transactions from LI.FI/Nordstern
+keep their provider-supplied fee fields.
+
+This does NOT guarantee a lower final network fee. The chain base fee, L1 data
+cost, calldata size, route state and wallet behavior can change.
+
+## Official Uniswap Robinhood Chain addresses used
+
+```text
+Universal Router
+0x8876789976decbfcbbbe364623c63652db8c0904
+
+V3 SwapRouter02
+0xcaf681a66d020601342297493863e78c959e5cb2
+
+V2 Router02
+0x89e5db8b5aa49aa85ac63f691524311aeb649eba
+
+V3 Quoter
+0x33e885ed0ec9bf04ecfb19341582aadcb4c8a9e7
+
+WETH
+0x0Bd7D308f8E1639FAb988df18A8011f41EAcAD73
+```
 
 ## Holder gate
 
-The frontend checks `/api/holder` when a wallet connects.
+Unchanged:
 
-More importantly, `/api/quote` performs its own onchain DEAD PIXELS `balanceOf(taker)` check before returning any executable transaction.
+- minimum 1 DEAD PIXELS NFT
+- UI locked for non-holders
+- `/api/quote` independently checks `balanceOf(taker)` before returning an
+  executable transaction.
 
-A non-holder therefore cannot bypass the UI by simply calling the portal quote endpoint directly.
+## Test target
 
-This gate applies to GLITCH ROUTER itself. It obviously does not prevent a non-holder from using Uniswap, LI.FI, Nordstern, or another DEX outside our portal.
-
-## Nordstern integration
-
-The direct provider uses:
-
-```text
-GET https://api.nordstern.finance/aggregator/4663
-?src=...
-&dst=...
-&amount=...
-```
-
-Robinhood native ETH is translated from the portal's internal native-token sentinel to the zero-address native representation for the Nordstern request.
-
-The integration consumes the returned `toAmount` and executable `tx`.
-
-For ERC-20 sells, the approval spender is selected from explicit Nordstern response fields when available, with the returned transaction destination used as a compatibility fallback. Approval remains exact-to-trade, never unlimited.
-
-For safety, a native-input Nordstern quote is rejected if its returned transaction has no `tx.value`; the router does not guess or manufacture provider calldata.
-
-## Token list
-
-The `/api/tokens` endpoint now attempts to merge:
-
-- LI.FI token catalog
-- Nordstern token catalog
-
-If one source is unavailable, the other can still populate the selector.
-
-Users can still paste any ERC-20 contract manually.
-
-## Gas ranking
-
-When USD prices are available:
+The first regression test should be:
 
 ```text
-gross output value
-- estimated network gas
-- reported provider fee
-= estimated net value
+0.001 ETH → NVDA
 ```
 
-When reliable USD pricing is missing, fallback ranking is:
+Compare the wallet confirmation fee against the official Uniswap app at nearly
+the same time.
 
-1. highest token output
-2. lower estimated gas as a tie-breaker
-
-## Environment
-
-Optional:
+V2 should show extra candidates such as:
 
 ```text
-LIFI_API_KEY=
-RH_RPC_URL=https://rpc.mainnet.chain.robinhood.com/
+UNISWAP UNIVERSAL
+UNISWAP V2 DIRECT
+NORDSTERN DIRECT
+UNISWAP DIRECT
+LI.FI
 ```
 
-No Nordstern API key is required by this build.
-
-A dedicated RPC is recommended in production because every executable quote now includes:
-
-- holder NFT balance check
-- provider quote calls
-- Uniswap onchain quote calls
-- gas estimation
-- allowance checks when applicable
-
-## Test plan
-
-1. Deploy to Vercel preview.
-2. Open `/api/health`.
-3. Connect a wallet with **0 DEAD PIXELS**.
-   - page should show `ACCESS DENIED`
-   - `/api/quote` should return HTTP 403.
-4. Connect a wallet with **1+ DEAD PIXELS**.
-   - page should show `HOLDER ACCESS GRANTED`
-   - quote scanning should unlock.
-5. Test `ETH → NVDA`.
-   - Nordstern / Uniswap / LI.FI should compete when available.
-6. Test `ETH → WETH`.
-   - DIRECT WRAP should be used 1:1.
-7. Start with tiny live transactions and inspect the destination in the wallet before confirming.
+Only the best net candidate is selected by default.
 
 ## Important
 
-Nordstern, LI.FI and Uniswap are third-party execution/liquidity providers. GLITCH ROUTER remains non-custodial and does not deploy a DEAD PIXELS swap contract in this build.
+No route can be guaranteed to always beat Uniswap's own app. Uniswap can use
+V2, V3, V4, Universal Router and UniswapX depending on current market state.
+V2 closes one concrete gap observed in the live screenshots: our previous
+failure to simulate the official Universal Router execution family for native
+ETH trades.

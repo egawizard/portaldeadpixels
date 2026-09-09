@@ -1,5 +1,6 @@
 const {
   encodeFunctionData,
+  encodeAbiParameters,
   decodeFunctionResult,
   encodePacked,
   getAddress,
@@ -16,6 +17,9 @@ const USDG = "0x5fc5360D0400a0Fd4f2af552ADD042D716F1d168";
 
 const UNISWAP_V3_QUOTER = "0x33e885ed0ec9bf04ecfb19341582aadcb4c8a9e7";
 const UNISWAP_SWAP_ROUTER_02 = "0xcaf681a66d020601342297493863e78c959e5cb2";
+const UNISWAP_UNIVERSAL_ROUTER = "0x8876789976decbfcbbbe364623c63652db8c0904";
+const UNISWAP_V2_ROUTER_02 = "0x89e5db8b5aa49aa85ac63f691524311aeb649eba";
+const UNIVERSAL_ADDRESS_THIS = "0x0000000000000000000000000000000000000002";
 const RPC = process.env.RH_RPC_URL || "https://rpc.mainnet.chain.robinhood.com/";
 const FEES = [100, 500, 3000, 10000];
 
@@ -29,6 +33,15 @@ const routerAbi = parseAbi([
   "function exactInput((bytes path,address recipient,uint256 amountIn,uint256 amountOutMinimum) params) payable returns (uint256 amountOut)",
   "function unwrapWETH9(uint256 amountMinimum,address recipient) payable",
   "function multicall(bytes[] data) payable returns (bytes[] results)"
+]);
+
+const universalExecuteAbi = parseAbi([
+  "function execute(bytes commands,bytes[] inputs) payable"
+]);
+
+const v2RouterAbi = parseAbi([
+  "function getAmountsOut(uint256 amountIn,address[] path) view returns (uint256[] amounts)",
+  "function swapExactETHForTokens(uint256 amountOutMin,address[] path,address to,uint256 deadline) payable returns (uint256[] amounts)"
 ]);
 
 let tokenCache = { at: 0, map: new Map() };
@@ -107,6 +120,15 @@ function rpcHex(v){
   if(v==null) return "0x0";
   const s=String(v);
   return /^0x[0-9a-fA-F]+$/.test(s) ? s : "0x"+BigInt(s).toString(16);
+}
+
+// Robinhood Chain uses FCFS ordering. Higher priority bidding cannot jump the queue.
+// For our own direct transactions, use the node's current accepted gas price with a
+// tiny 1% safety cushion instead of letting wallets add an unnecessarily large margin.
+function ecoGasPrice(gasPrice){
+  if(gasPrice==null) return null;
+  const g=BigInt(gasPrice);
+  return rpcHex(g + (g/100n) + 1n);
 }
 
 async function getTokenMap(){
@@ -224,6 +246,7 @@ async function getDirectWrap({sellToken,buyToken,sellAmount,taker,gasPrice,ethUs
     tx={to:WETH,data:"0x2e1a7d4d"+toHex32(sellAmount),value:"0x0",gas:null,gasPrice:null};
   }
   const gasUnits=await estimateTxGas(tx,taker,isWrap?30000n:38000n);
+  if(gasPrice!=null) tx.gasPrice=ecoGasPrice(gasPrice);
   const base={
     provider:"wrap",
     label:isWrap?"DIRECT WRAP":"DIRECT UNWRAP",
@@ -236,6 +259,156 @@ async function getDirectWrap({sellToken,buyToken,sellAmount,taker,gasPrice,ethUs
     complexity:"DIRECT"
   };
   return addGasMetrics(base,{gasUnits,approvalGasUnits:0n,gasPrice,ethUsd,buyInfo,sellInfo,sellAmount});
+}
+
+
+async function getUniswapUniversalNative({sellToken,buyToken,sellAmount,taker,slippageBps,gasPrice,ethUsd,buyInfo,sellInfo}){
+  // This micro-route is intentionally native-ETH input only.
+  // It mirrors the official Universal Router execution family used by the
+  // Uniswap app, without introducing Permit2 overhead for ERC-20 inputs.
+  if(sellToken.toLowerCase()!==NATIVE) throw new Error("UNIVERSAL_MICRO_ROUTE_NATIVE_ONLY");
+  if(buyToken.toLowerCase()===NATIVE || buyToken.toLowerCase()===WETH.toLowerCase())
+    throw new Error("NOT_A_UNIVERSAL_SWAP_PAIR");
+
+  const tokenIn=getAddress(WETH.toLowerCase());
+  const tokenOut=getAddress(buyToken.toLowerCase());
+  const candidates=[];
+
+  await Promise.all(FEES.map(async fee=>{
+    try{
+      const q=await quoteSingle(tokenIn,tokenOut,sellAmount,fee);
+      if(q.amountOut>0n)candidates.push(q);
+    }catch{}
+  }));
+  if(!candidates.length) throw new Error("No Universal Router V3 direct pool");
+
+  const scored=[];
+  for(const c of candidates){
+    const amountMin=minOut(c.amountOut,slippageBps);
+    const path=pathHex(c.tokens,c.fees);
+
+    const wrapInput=encodeAbiParameters(
+      [{type:"address"},{type:"uint256"}],
+      [UNIVERSAL_ADDRESS_THIS,BigInt(sellAmount)]
+    );
+
+    // Newer Universal Router deployments append minHopPriceX36.
+    const modernSwapInput=encodeAbiParameters(
+      [
+        {type:"address"},{type:"uint256"},{type:"uint256"},
+        {type:"bytes"},{type:"bool"},{type:"uint256[]"}
+      ],
+      [getAddress(taker.toLowerCase()),BigInt(sellAmount),amountMin,path,false,[]]
+    );
+
+    // Compatibility fallback for older UR command encoding.
+    const legacySwapInput=encodeAbiParameters(
+      [
+        {type:"address"},{type:"uint256"},{type:"uint256"},
+        {type:"bytes"},{type:"bool"}
+      ],
+      [getAddress(taker.toLowerCase()),BigInt(sellAmount),amountMin,path,false]
+    );
+
+    let bestTx=null,bestGas=null,encoding=null;
+    for(const [name,swapInput] of [["CURRENT",modernSwapInput],["LEGACY",legacySwapInput]]){
+      try{
+        const data=encodeFunctionData({
+          abi:universalExecuteAbi,
+          functionName:"execute",
+          args:["0x0b00",[wrapInput,swapInput]] // WRAP_ETH -> V3_SWAP_EXACT_IN
+        });
+        const tx={
+          to:UNISWAP_UNIVERSAL_ROUTER,
+          data,
+          value:rpcHex(sellAmount),
+          gas:null,
+          gasPrice:gasPrice!=null?ecoGasPrice(gasPrice):null
+        };
+        const g=await estimateTxGas(tx,taker,null);
+        if(g!=null && (bestGas==null || g<bestGas)){
+          bestGas=g;bestTx=tx;encoding=name;
+        }
+      }catch{}
+    }
+    if(bestTx && bestGas!=null){
+      const gasUsd=gasUsdFromUnits(bestGas,gasPrice,ethUsd);
+      const grossUsd=tokenAmountUsd(c.amountOut.toString(),buyInfo);
+      const netUsd=(gasUsd!=null&&grossUsd!=null)?grossUsd-gasUsd:null;
+      scored.push({...c,tx:bestTx,gasUnits:bestGas,gasUsd,grossUsd,netUsd,encoding});
+    }
+  }
+  if(!scored.length) throw new Error("Universal Router execution simulation failed");
+
+  scored.sort((a,b)=>{
+    if(a.netUsd!=null&&b.netUsd!=null&&a.netUsd!==b.netUsd)return a.netUsd>b.netUsd?-1:1;
+    if(a.amountOut!==b.amountOut)return a.amountOut>b.amountOut?-1:1;
+    return a.gasUnits<b.gasUnits?-1:1;
+  });
+  const best=scored[0];
+  const fees=best.fees.map(x=>`${x/10000}%`).join(" + ");
+  const base={
+    provider:"uniur",
+    label:"UNISWAP UNIVERSAL",
+    buyAmount:best.amountOut.toString(),
+    minBuyAmount:minOut(best.amountOut,slippageBps).toString(),
+    approvalSpender:null,
+    providerFeeUsd:null,
+    route:`UNIVERSAL ROUTER // V3 DIRECT // LP FEE ${fees}`,
+    transaction:best.tx,
+    complexity:"MICRO",
+    meta:{router:"UniversalRouter",encoding:best.encoding,feeTiers:best.fees}
+  };
+  return addGasMetrics(base,{
+    gasUnits:best.gasUnits,approvalGasUnits:0n,gasPrice,ethUsd,buyInfo,sellInfo,sellAmount
+  });
+}
+
+async function getUniswapV2Native({sellToken,buyToken,sellAmount,taker,slippageBps,gasPrice,ethUsd,buyInfo,sellInfo}){
+  if(sellToken.toLowerCase()!==NATIVE) throw new Error("V2_MICRO_ROUTE_NATIVE_ONLY");
+  if(buyToken.toLowerCase()===NATIVE || buyToken.toLowerCase()===WETH.toLowerCase())
+    throw new Error("NOT_A_V2_SWAP_PAIR");
+
+  const path=[getAddress(WETH.toLowerCase()),getAddress(buyToken.toLowerCase())];
+  const quoteData=encodeFunctionData({
+    abi:v2RouterAbi,functionName:"getAmountsOut",
+    args:[BigInt(sellAmount),path]
+  });
+  const raw=await rpcCall(UNISWAP_V2_ROUTER_02,quoteData);
+  const amounts=decodeFunctionResult({abi:v2RouterAbi,functionName:"getAmountsOut",data:raw});
+  const amountOut=BigInt(amounts[amounts.length-1]);
+  if(amountOut<=0n) throw new Error("No direct Uniswap V2 liquidity");
+
+  const minimum=minOut(amountOut,slippageBps);
+  const deadline=BigInt(Math.floor(Date.now()/1000)+120);
+  const data=encodeFunctionData({
+    abi:v2RouterAbi,functionName:"swapExactETHForTokens",
+    args:[minimum,path,getAddress(taker.toLowerCase()),deadline]
+  });
+  const tx={
+    to:UNISWAP_V2_ROUTER_02,
+    data,
+    value:rpcHex(sellAmount),
+    gas:null,
+    gasPrice:gasPrice!=null?ecoGasPrice(gasPrice):null
+  };
+  const gasUnits=await estimateTxGas(tx,taker,null);
+  if(gasUnits==null) throw new Error("V2 execution simulation failed");
+
+  const base={
+    provider:"univ2",
+    label:"UNISWAP V2 DIRECT",
+    buyAmount:amountOut.toString(),
+    minBuyAmount:minimum.toString(),
+    approvalSpender:null,
+    providerFeeUsd:null,
+    route:"V2 DIRECT // ONE POOL",
+    transaction:tx,
+    complexity:"MICRO"
+  };
+  return addGasMetrics(base,{
+    gasUnits,approvalGasUnits:0n,gasPrice,ethUsd,buyInfo,sellInfo,sellAmount
+  });
 }
 
 async function getNordstern({sellToken,buyToken,sellAmount,taker,slippageBps,gasPrice,ethUsd,buyInfo,sellInfo}){
@@ -475,6 +648,7 @@ async function getUniswapDirect({sellToken,buyToken,sellAmount,taker,slippageBps
 
   const best=scored[0];
   const tx=buildUniTransaction(best,{sellToken,buyToken,sellAmount,taker,slippageBps});
+  if(gasPrice!=null) tx.gasPrice=ecoGasPrice(gasPrice);
   let swapGas=best.gasEstimate;
   if(sellToken.toLowerCase()===NATIVE || currentAllowance>=BigInt(sellAmount)){
     const live=await estimateTxGas(tx,taker,best.gasEstimate);
@@ -510,7 +684,7 @@ module.exports = async function handler(req,res){
     if(!addressOk(taker)) return json(res,400,{error:"INVALID_TAKER"});
     try{ if(BigInt(sellAmount)<=0n) throw 0; }catch{return json(res,400,{error:"INVALID_SELL_AMOUNT"});}
     if(!Number.isInteger(slippageBps)||slippageBps<1||slippageBps>500) return json(res,400,{error:"INVALID_SLIPPAGE"});
-    if(!["all","wrap","nordstern","lifi","uniswap"].includes(provider)) return json(res,400,{error:"INVALID_PROVIDER"});
+    if(!["all","wrap","nordstern","lifi","uniswap","uniur","univ2"].includes(provider)) return json(res,400,{error:"INVALID_PROVIDER"});
 
     // HARD PORTAL GATE: no executable quote is returned unless the taker
     // currently owns at least one DEAD PIXELS NFT.
@@ -537,9 +711,13 @@ module.exports = async function handler(req,res){
     }
 
     if(!isWrapPair){
+      // Native ETH trades get two extra "micro gas" paths. Each is simulated
+      // and only wins if its net result actually beats the alternatives.
+      if(provider==="all"||provider==="uniur") jobs.push(["UNISWAP UNIVERSAL",()=>getUniswapUniversalNative(args)]);
+      if(provider==="all"||provider==="univ2") jobs.push(["UNISWAP V2",()=>getUniswapV2Native(args)]);
       if(provider==="all"||provider==="nordstern") jobs.push(["NORDSTERN",()=>getNordstern(args)]);
       if(provider==="all"||provider==="lifi") jobs.push(["LI.FI",()=>getLifi(args)]);
-      if(provider==="all"||provider==="uniswap") jobs.push(["UNISWAP",()=>getUniswapDirect(args)]);
+      if(provider==="all"||provider==="uniswap") jobs.push(["UNISWAP V3",()=>getUniswapDirect(args)]);
     }
 
     const settled=await Promise.all(jobs.map(async ([name,fn])=>{
@@ -569,8 +747,10 @@ module.exports = async function handler(req,res){
       sellValueUsd:sellUsd,
       providers:[
         {name:"DIRECT WRAP",enabled:true,for:"ETH/WETH"},
+        {name:"UNISWAP UNIVERSAL",enabled:true,for:"NATIVE ETH INPUT"},
+        {name:"UNISWAP V2 DIRECT",enabled:true,for:"NATIVE ETH INPUT"},
         {name:"NORDSTERN DIRECT",enabled:true},
-        {name:"UNISWAP DIRECT",enabled:true,version:"V3"},
+        {name:"UNISWAP V3 DIRECT",enabled:true},
         {name:"LI.FI",enabled:true}
       ],
       quotes,errors,generatedAt:new Date().toISOString(),

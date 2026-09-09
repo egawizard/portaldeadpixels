@@ -159,7 +159,7 @@ a{color:inherit}
 
   <section class="swap-shell">
     <div class="windowbar">
-      <span>GLITCH_SWAP.EXE // BETA</span>
+      <span>GLITCH_SWAP.EXE // V2</span>
       <span class="dots"><i></i><i></i><i></i></span>
     </div>
     <div class="swap">
@@ -229,7 +229,7 @@ a{color:inherit}
 
       <div class="details">
         <div><small>PROTOCOL FEE</small><b>0.00%</b></div>
-        <div><small>ROUTING</small><b id="routingLabel">NORDSTERN + UNI + LI.FI</b></div>
+        <div><small>ROUTING</small><b id="routingLabel">MICRO GAS ENGINE</b></div>
         <div><small>EXECUTION</small><b>YOUR WALLET</b></div>
       </div>
     </div>
@@ -533,7 +533,7 @@ a{color:inherit}
       const min=q.minBuyAmount?formatUnits(q.minBuyAmount,buy.decimals,7):"--";
       const gas=q.gasUsd?`GAS ~$${Number(q.gasUsd).toFixed(4)}`:"GAS EST. AT EXECUTION";
       return `<div class="quote ${i===0?"best":""}" data-provider="${escapeHtml(q.provider)}">
-        <div class="qleft"><b>${escapeHtml(q.label)} ${i===0?'<span class="badge">BEST OUTPUT</span>':""}</b>
+        <div class="qleft"><b>${escapeHtml(q.label)} ${i===0?'<span class="badge">BEST NET</span>':""}</b>
         <small>${escapeHtml(q.route||"SMART ROUTE")} // ${gas}</small></div>
         <div class="qright"><b>${escapeHtml(out)} ${escapeHtml(buy.symbol)}</b><small>MIN ${escapeHtml(min)}</small></div>
       </div>`;
@@ -552,7 +552,7 @@ a{color:inherit}
     if(!account || !holderState.eligible || !els.sellAmount.value || Number(els.sellAmount.value)<=0){updateAction();return;}
     try{
       setStatus("SCANNING ROUTES // REQUESTING EXECUTABLE QUOTES...");
-      els.quotePanel.innerHTML='<div class="empty">SCANNING NORDSTERN + UNI + LI.FI...</div>';
+      els.quotePanel.innerHTML='<div class="empty">SCANNING MICRO GAS ENGINE...</div>';
       const {data,buy}=await fetchQuotes("all");
       renderQuotes(data,buy);
       const enabled=(data.providers||[]).filter(x=>x.enabled).map(x=>x.name).join(" + ");
