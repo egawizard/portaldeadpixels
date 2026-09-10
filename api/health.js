@@ -20,10 +20,10 @@ module.exports=async function handler(req,res){
 
   res.status(200).json({
     ok:true,
-    app:"DEAD PIXELS PORTAL V3.5.2 // UNIFIED EXECUTION OS // LARGE MENU",
+    app:"DEAD PIXELS PORTAL V3.7.3 // GLITCH ALPHA + UNIFIED EXECUTION OS",
     chainId:4663,
     protocolFeeBps:0,
-    holderGate:{enabled:true,minimumNFTs:1,nftContract:"0x27390fe7ae676fbfdb632e61cd4019996b07892c",enforcement:"SERVER_SIDE_EXECUTABLE_QUOTE_GATE"},
+    holderGate:{enabled:true,minimumNFTs:1,nftContract:"0x27390fe7ae676fbfdb632e61cd4019996b07892c",enforcement:"FULL_UI_HOLDER_GATE + SERVER_SIDE_EXECUTABLE_QUOTE_GATE"},
     modules:{
       v30UnifiedPortalUI:true,
       v31StockTokenRegistry:{enabled:stockRegistry,count:stockTokenCount},
@@ -34,7 +34,8 @@ module.exports=async function handler(req,res){
       v34PortfolioBuilder:true,
       v34Rebalancer:true,
       v35WaitForBetter:true,
-      v35ExecutionOrders:"CLIENT_WATCH_WALLET_CONFIRMATION"
+      v35ExecutionOrders:"CLIENT_WATCH_WALLET_CONFIRMATION",
+      v373GlitchAlpha:{enabled:true,scope:"UNIVERSAL_ERC20",directOnchainDiscovery:true,historicalSearch:true,multiSource:true,paginatedCatalog:true,qualifiedVolume:true,pairLevelRankings:true,canonicalPairScore:true,dualHolderPipeline:true,holderMap:true,liquidityLockIntel:true,dexScreenerPaidOrders:true,scoreModel:"V3.7.3"}
     },
     routing:{uniswapOfficial,uniswapRobinhood4663:robinhoodSupported,uniswapX:"via BEST_PRICE when eligible",nordsternDirect:true,lifi:true,directWrap:true},
     universalRouterVersion:"2.1.1",

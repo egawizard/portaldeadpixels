@@ -1,6 +1,6 @@
 {
-  "name": "dead-pixels-portal-v35",
-  "version": "3.5.2",
+  "name": "dead-pixels-portal-v373",
+  "version": "3.7.3",
   "private": true,
   "engines": {
     "node": "22.x"
