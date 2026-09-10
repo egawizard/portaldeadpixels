@@ -1,8 +1,8 @@
-# DEAD PIXELS PORTAL V3.7.3 — GLITCH ALPHA
+# DEAD PIXELS PORTAL V3.7.4 — GLITCH ALPHA
 
 This is the Vercel-ready continuation of the V3.7.2 Portal. The corrupted-terminal / black + acid-green DEAD PIXELS UI and the V3.5.2 execution core are preserved.
 
-## V3.7.3 changes
+## V3.7.4 changes
 
 ### Full DEAD PIXELS holder gate
 The whole Portal interface is hidden until the connected wallet passes an onchain `balanceOf` check against:
@@ -55,10 +55,27 @@ LIFI_API_KEY=your_existing_key_if_used
 2. Replace the current Portal project files with the extracted files.
 3. Keep the same Vercel environment variables.
 4. Deploy / Redeploy.
-5. Open `/api/health` and confirm `DEAD PIXELS PORTAL V3.7.3`.
+5. Open `/api/health` and confirm `DEAD PIXELS PORTAL V3.7.4`.
 6. Open the site in a wallet/browser that does **not** hold DEAD PIXELS: only the HOLDER ACCESS screen should be visible.
 7. Connect a wallet holding at least 1 DEAD PIXELS: the full Portal should unlock.
 8. Open **02 ALPHA**, select several tokens, and confirm HOLDERS, HOLDER_MAP, LIQUIDITY LOCK, and DEXSCREENER PAID / PROMOTION are shown.
 
 ## Accuracy note
 Holder indexing, DEX paid orders and liquidity-lock evidence come from external/indexed/onchain sources and can lag. The Portal intentionally uses `UNKNOWN`/`N+` when evidence is incomplete instead of inventing certainty.
+
+## V3.7.4 fixes
+
+- Holder intelligence is now rate-limit-aware. The canonical Blockscout token-info request is used for exact `holders_count`; the holder-map request is prioritized and requests are staggered instead of sent as a burst.
+- If exact holder count is temporarily unavailable but the current holder map is available, the UI shows a lower-bound label such as `50+` instead of `--`.
+- DEXSCREENER PAID now fuses the token-specific paid-orders endpoint with active Boost and Ad signals. A failed paid-orders request reports `UNKNOWN`, never a false `NOT PAID`.
+- Alpha and module typography received a readability pass. Core table/detail text is materially larger while preserving the black + acid-green corrupted-terminal layout.
+- Holder access gate remains unchanged: read-only `balanceOf`, minimum 1 DEAD PIXELS NFT, no message signature, no approval, no automatic transaction.
+
+### Deploy
+
+1. Extract this ZIP.
+2. Replace the files in the current Vercel Portal project with the extracted files.
+3. Keep the existing Vercel environment variables. No new key is required for V3.7.4.
+4. Deploy / Redeploy.
+5. Open `/api/health` and confirm `PORTAL V3.7.4` and `v374GlitchAlpha`.
+6. Connect a DEAD PIXELS holder wallet, open `02 ALPHA`, and test a known DEX-paid token plus a token whose holder page is populated in Robinhood Blockscout.
