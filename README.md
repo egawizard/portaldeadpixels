@@ -1,48 +1,59 @@
-# DEAD PIXELS PORTAL V3.7.4 — GLITCH ALPHA
+# DEAD PIXELS PORTAL V3.7.5 — Security-Safe Holder Gate
 
-This is the Vercel-ready continuation of the V3.7.2 Portal. The corrupted-terminal / black + acid-green DEAD PIXELS UI and the V3.5.2 execution core are preserved.
+V3.7.5 keeps the V3.7.4 GLITCH ALPHA build and changes the wallet-access behavior to reduce unnecessary wallet/security signals while preserving full holder-only access.
 
-## V3.7.4 changes
+## What changed
 
-### Full DEAD PIXELS holder gate
-The whole Portal interface is hidden until the connected wallet passes an onchain `balanceOf` check against:
+- **No wallet/provider request on page load.** The page does not call `eth_accounts`, `eth_requestAccounts`, `wallet_switchEthereumChain`, signing methods, approvals, or transaction methods automatically.
+- **Explicit manual connect only.** The first wallet permission request happens only after the user presses **CONNECT WALLET**.
+- **No network switch during the holder gate.** After account selection, the Portal sends only the public wallet address to `/api/holder`; the server verifies DEAD PIXELS ownership with a read-only `balanceOf()` call against Robinhood Chain.
+- **No signature, approval or transaction during access verification.** Network switching is deferred until the holder deliberately starts an execution action that actually needs Robinhood Chain.
+- **Full UI remains holder-only.** The Portal shell and Alpha loaders remain locked until the address holds at least 1 DEAD PIXELS NFT.
+- **Passive wallet events are ignored before explicit consent.** Account/network events cannot silently unlock the Portal on initial page load.
+- **Security headers added.** `X-Frame-Options`, CSP, no-referrer and restrictive Permissions-Policy are applied to the site.
+
+## Holder contract
 
 `0x27390fe7ae676fbfdb632e61cd4019996b07892c`
 
-Requirement: **1+ DEAD PIXELS NFT**. A non-holder sees only the HOLDER ACCESS screen. Market/Alpha loaders are not started until the check succeeds. No private key or seed phrase is requested. Execution remains non-custodial and wallet-confirmed.
+Minimum: **1 DEAD PIXELS**
 
-### Holder count + HOLDER_MAP
-Token detail now uses two Blockscout paths:
-1. Blockscout V2 token info/counters/holders.
-2. Blockscout Etherscan-compatible `getTokenHolders` fallback.
+## Access sequence
 
-Holder responses are normalized across nested address formats. If Blockscout exposes an exact count it is displayed. If only a sampled list is available, the UI shows an honest `N+` sample rather than a fake zero. HOLDER_MAP visualizes the top holder sample and labels pool, burn/locker, deployer and normal-holder rows when detectable.
+```text
+LOAD PORTAL
+  ↓
+NO WALLET REQUEST
+  ↓
+USER CLICKS CONNECT WALLET
+  ↓
+eth_requestAccounts
+  ↓
+/api/holder?wallet=0x...
+  ↓
+SERVER READ-ONLY NFT balanceOf() ON CHAIN 4663
+  ↓
+BALANCE >= 1 → UNLOCK PORTAL
+BALANCE = 0  → KEEP PORTAL LOCKED
+```
 
-### Liquidity lock intelligence
-Token detail now shows **LIQUIDITY LOCK**. The engine is deliberately conservative:
-- V2: detects LP-token balances at the burn address or recognized locker addresses and calculates the detected locked share when possible.
-- Recognized permanent-launch origins can report `PERMANENT` when there is positive onchain/source evidence.
-- V3/V4 concentrated positions are not falsely declared unlocked. If the position owner/launcher cannot be proven, the status is `UNKNOWN`.
+No seed phrase/private key is ever requested. No message signature, approval, or transaction is part of this holder verification flow.
 
-`UNKNOWN` means GLITCH ALPHA does not have enough positive evidence; it does **not** mean the liquidity is unlocked.
+## Existing V3.7.4 features preserved
 
-### DEX paid / promotion intelligence
-Token detail checks DEX Screener's paid-orders endpoint and displays **DEXSCREENER PAID / PROMOTION** as `PAID`, `NOT PAID`, or `UNKNOWN`. It also shows the number of observed paid-order signals and active boosts when available. This is a marketing/promotion signal, not a token-quality score.
-
-## Existing ALPHA features preserved
-- pair-aware Trending / Just Born / Gainers / Volume / Risk Radar / All Tokens / Watchlist
-- direct Robinhood Chain mint pulse
-- GeckoTerminal + DEX Screener market data
-- Blockscout historical token catalog
-- canonical pair-level GLITCH score
-- contract/source risk signals
-- deployer intelligence
-- OHLCV + whale tape
-- direct Load Into Router
-- official $GLITCH pinned without an artificial score bonus
+- GLITCH ALPHA universal token intelligence
+- pair-aware rankings and canonical score
+- qualified Trending / Gainers / Volume
+- Just Born + historical token discovery
+- HOLDER_MAP and holder intelligence
+- Liquidity lock intelligence
+- DEX Screener paid / boosts / ads intelligence
+- larger readability typography
+- 0% protocol fee GLITCH Router
 
 ## Environment variables
-Keep your current Vercel variables. The free official Robinhood RPC is supported:
+
+Keep the existing variables. No new key is required:
 
 ```text
 RH_RPC_URL=https://rpc.mainnet.chain.robinhood.com/
@@ -51,31 +62,17 @@ LIFI_API_KEY=your_existing_key_if_used
 ```
 
 ## Simple deployment
-1. Extract this ZIP.
-2. Replace the current Portal project files with the extracted files.
-3. Keep the same Vercel environment variables.
-4. Deploy / Redeploy.
-5. Open `/api/health` and confirm `DEAD PIXELS PORTAL V3.7.4`.
-6. Open the site in a wallet/browser that does **not** hold DEAD PIXELS: only the HOLDER ACCESS screen should be visible.
-7. Connect a wallet holding at least 1 DEAD PIXELS: the full Portal should unlock.
-8. Open **02 ALPHA**, select several tokens, and confirm HOLDERS, HOLDER_MAP, LIQUIDITY LOCK, and DEXSCREENER PAID / PROMOTION are shown.
-
-## Accuracy note
-Holder indexing, DEX paid orders and liquidity-lock evidence come from external/indexed/onchain sources and can lag. The Portal intentionally uses `UNKNOWN`/`N+` when evidence is incomplete instead of inventing certainty.
-
-## V3.7.4 fixes
-
-- Holder intelligence is now rate-limit-aware. The canonical Blockscout token-info request is used for exact `holders_count`; the holder-map request is prioritized and requests are staggered instead of sent as a burst.
-- If exact holder count is temporarily unavailable but the current holder map is available, the UI shows a lower-bound label such as `50+` instead of `--`.
-- DEXSCREENER PAID now fuses the token-specific paid-orders endpoint with active Boost and Ad signals. A failed paid-orders request reports `UNKNOWN`, never a false `NOT PAID`.
-- Alpha and module typography received a readability pass. Core table/detail text is materially larger while preserving the black + acid-green corrupted-terminal layout.
-- Holder access gate remains unchanged: read-only `balanceOf`, minimum 1 DEAD PIXELS NFT, no message signature, no approval, no automatic transaction.
-
-### Deploy
 
 1. Extract this ZIP.
-2. Replace the files in the current Vercel Portal project with the extracted files.
-3. Keep the existing Vercel environment variables. No new key is required for V3.7.4.
+2. Replace the current Vercel Portal project files with the extracted files.
+3. Keep the existing Vercel environment variables.
 4. Deploy / Redeploy.
-5. Open `/api/health` and confirm `PORTAL V3.7.4` and `v374GlitchAlpha`.
-6. Connect a DEAD PIXELS holder wallet, open `02 ALPHA`, and test a known DEX-paid token plus a token whose holder page is populated in Robinhood Blockscout.
+5. Open `/api/health` and confirm **DEAD PIXELS PORTAL V3.7.5** and `securitySafeAccess.manualConnectOnly: true`.
+6. Open the Portal in a fresh/private browser window. **No wallet popup should appear by itself.**
+7. Press **CONNECT WALLET** manually. This should be the first wallet permission request.
+8. A holder wallet should unlock the Portal; a non-holder wallet should remain on the access screen.
+9. During access verification there should be **no network-switch, signature, approval, or transaction prompt**.
+
+## Important
+
+This build reduces unnecessary wallet/security signals but cannot guarantee how MetaMask or any third-party threat-intelligence provider classifies a domain. If a domain warning is already active, a clean redeploy does not itself guarantee immediate removal; the classification provider may need to rescan/review the site.
