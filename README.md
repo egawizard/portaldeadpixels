@@ -1,6 +1,6 @@
-# DEAD PIXELS PORTAL V3.7.5 — Security-Safe Holder Gate
+# DEAD PIXELS PORTAL V3.7.6 — Security-Safe Holder Gate
 
-V3.7.5 keeps the V3.7.4 GLITCH ALPHA build and changes the wallet-access behavior to reduce unnecessary wallet/security signals while preserving full holder-only access.
+V3.7.6 keeps the V3.7.4 GLITCH ALPHA build and changes the wallet-access behavior to reduce unnecessary wallet/security signals while preserving full holder-only access.
 
 ## What changed
 
@@ -67,7 +67,7 @@ LIFI_API_KEY=your_existing_key_if_used
 2. Replace the current Vercel Portal project files with the extracted files.
 3. Keep the existing Vercel environment variables.
 4. Deploy / Redeploy.
-5. Open `/api/health` and confirm **DEAD PIXELS PORTAL V3.7.5** and `securitySafeAccess.manualConnectOnly: true`.
+5. Open `/api/health` and confirm **DEAD PIXELS PORTAL V3.7.6** and `securitySafeAccess.manualConnectOnly: true`.
 6. Open the Portal in a fresh/private browser window. **No wallet popup should appear by itself.**
 7. Press **CONNECT WALLET** manually. This should be the first wallet permission request.
 8. A holder wallet should unlock the Portal; a non-holder wallet should remain on the access screen.
@@ -76,3 +76,7 @@ LIFI_API_KEY=your_existing_key_if_used
 ## Important
 
 This build reduces unnecessary wallet/security signals but cannot guarantee how MetaMask or any third-party threat-intelligence provider classifies a domain. If a domain warning is already active, a clean redeploy does not itself guarantee immediate removal; the classification provider may need to rescan/review the site.
+
+## V3.7.6 token-logo fix
+
+External token and Stock Token logos are now requested through `/api/token-image` so the strict `img-src 'self' data:` CSP can remain unchanged. The proxy only accepts HTTPS, rejects private/local destinations, validates DNS and redirects, enforces a 1.5 MB limit, and only returns raster image formats detected from file signatures. SVG/HTML are rejected. If an image is unavailable, the UI shows token initials instead of a broken-image icon.

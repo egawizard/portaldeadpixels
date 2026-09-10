@@ -1,6 +1,6 @@
 {
   "app": "DEAD PIXELS PORTAL",
-  "version": "3.7.5",
+  "version": "3.7.6",
   "chainId": 4663,
   "protocolFeeBps": 0,
   "holderAccess": {
@@ -17,7 +17,7 @@
     "v3.4": "PORTFOLIO BUILDER + REBALANCER",
     "v3.5": "WAIT FOR BETTER + EXECUTION ORDERS",
     "v3.6": "ANALYTICS (PERSISTENT BUILD EXISTS SEPARATELY)",
-    "v3.7.5": "GLITCH ALPHA // V3.7.4 INTELLIGENCE + SECURITY-SAFE MANUAL HOLDER ACCESS FLOW"
+    "v3.7.6": "GLITCH ALPHA // V3.7.5 SECURITY-SAFE HOLDER ACCESS + SAME-ORIGIN TOKEN IMAGE PROXY"
   },
   "glitchAlpha": {
     "scope": "ALL ERC-20 TOKENS ON ROBINHOOD CHAIN",
