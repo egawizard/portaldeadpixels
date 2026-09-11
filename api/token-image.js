@@ -100,7 +100,7 @@ async function fetchImage(raw) {
         signal: ctrl.signal,
         headers: {
           'accept': 'image/avif,image/webp,image/png,image/jpeg,image/gif,image/*;q=0.8',
-          'user-agent': 'DEAD-PIXELS-PORTAL/3.7.6 token-image-proxy'
+          'user-agent': 'DEAD-PIXELS-PORTAL/3.7.7 token-image-proxy'
         }
       });
     } finally { clearTimeout(timer); }

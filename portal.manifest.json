@@ -1,6 +1,6 @@
 {
   "app": "DEAD PIXELS PORTAL",
-  "version": "3.7.6",
+  "version": "3.7.7",
   "chainId": 4663,
   "protocolFeeBps": 0,
   "holderAccess": {
@@ -17,7 +17,7 @@
     "v3.4": "PORTFOLIO BUILDER + REBALANCER",
     "v3.5": "WAIT FOR BETTER + EXECUTION ORDERS",
     "v3.6": "ANALYTICS (PERSISTENT BUILD EXISTS SEPARATELY)",
-    "v3.7.6": "GLITCH ALPHA // V3.7.5 SECURITY-SAFE HOLDER ACCESS + SAME-ORIGIN TOKEN IMAGE PROXY"
+    "v3.7.7": "GLITCH ALPHA // INTELLIGENT MARKET GUARD + SECURITY-SAFE HOLDER ACCESS + SAME-ORIGIN TOKEN IMAGE PROXY"
   },
   "glitchAlpha": {
     "scope": "ALL ERC-20 TOKENS ON ROBINHOOD CHAIN",
@@ -28,7 +28,11 @@
     ],
     "liquidityLock": "POSITIVE-EVIDENCE ONLY; V2 LP BURN/KNOWN LOCKER OR RECOGNIZED PERMANENT LAUNCH ORIGIN",
     "dexPaid": "DEXSCREENER ORDERS + ACTIVE BOOSTS + ADS",
-    "riskNotice": "Signal-based intelligence; UNKNOWN is shown when lock or holder evidence cannot be proven."
+    "riskNotice": "Signal-based intelligence; scores are decision-support signals, not guarantees of safety, profit or sellability.",
+    "scoreModel": "V3.7.7 INTELLIGENT MARKET GUARD",
+    "scorePolicy": "PRICE SURVIVAL + LIQUIDITY QUALITY BEFORE MOMENTUM/ACTIVITY; UNIVERSAL CRASH CAPS APPLY TO EVERY MARKET PAIR",
+    "anomalyEngine": "DETECTS EXTREME DRAWDOWN, ABNORMAL VOLUME/LIQUIDITY TURNOVER, MICRO-LIQUIDITY CHURN, PARABOLIC MOVES AND ONE-SIDED FLOW",
+    "trendingPolicy": "CRASH/DISTRESSED/EXTREME-ANOMALY MARKETS ARE REMOVED FROM MAIN TRENDING AND SURFACED IN RISK RADAR"
   },
   "executionOrderMode": "CLIENT_WATCH_WALLET_CONFIRMATION_REQUIRED",
   "stockFairValueSource": "ROBINHOOD_RHJ_BID_ASK_X_CURRENT_MULTIPLIER"

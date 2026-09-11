@@ -1,59 +1,75 @@
-# DEAD PIXELS PORTAL V3.7.6 — Security-Safe Holder Gate
+# DEAD PIXELS PORTAL V3.7.7 — Intelligent Market Guard
 
-V3.7.6 keeps the V3.7.4 GLITCH ALPHA build and changes the wallet-access behavior to reduce unnecessary wallet/security signals while preserving full holder-only access.
+V3.7.7 upgrades GLITCH ALPHA so its score behaves like market intelligence instead of a raw activity leaderboard. The rule is universal: a market that is collapsing cannot earn a strong Alpha score simply because volume or transaction count is high.
 
-## What changed
+## V3.7.7 intelligence changes
 
-- **No wallet/provider request on page load.** The page does not call `eth_accounts`, `eth_requestAccounts`, `wallet_switchEthereumChain`, signing methods, approvals, or transaction methods automatically.
-- **Explicit manual connect only.** The first wallet permission request happens only after the user presses **CONNECT WALLET**.
-- **No network switch during the holder gate.** After account selection, the Portal sends only the public wallet address to `/api/holder`; the server verifies DEAD PIXELS ownership with a read-only `balanceOf()` call against Robinhood Chain.
-- **No signature, approval or transaction during access verification.** Network switching is deferred until the holder deliberately starts an execution action that actually needs Robinhood Chain.
-- **Full UI remains holder-only.** The Portal shell and Alpha loaders remain locked until the address holds at least 1 DEAD PIXELS NFT.
-- **Passive wallet events are ignored before explicit consent.** Account/network events cannot silently unlock the Portal on initial page load.
-- **Security headers added.** `X-Frame-Options`, CSP, no-referrer and restrictive Permissions-Policy are applied to the site.
+- **Universal Crash Guard** applies to every token and every market pair. There is no whitelist or special score exemption for DEAD PIXELS / $GLITCH.
+- **Price Survival** is now a first-class score component and carries major weight.
+- **Catastrophic drawdown score caps** prevent activity from overriding destructive price action.
+- **Anomaly Engine** detects extreme volume/liquidity churn, micro-liquidity with huge turnover, parabolic moves and one-sided order flow.
+- **Turnover Quality** replaces the old behavior where ever-higher Volume/Liquidity could always improve Activity. Healthy turnover can score well; absurd turnover is downgraded.
+- **Market Risk** is available directly in the feed model, while deep detail combines market risk with contract and holder signals.
+- **Risk Radar** receives distressed/crashed markets even when they are excluded from the normal Trending board.
+- **Gainers** now require a positive 24H change; a falling market cannot enter Gainers just because of other metrics.
+- **Score explainability** shows strengths, warnings, anomaly score, market risk, turnover and any active score cap.
+- **Rebound Watch** can recognize short-term recovery after a severe drawdown, but the crash cap remains active until the market actually recovers. A bounce does not erase the prior collapse.
 
-## Holder contract
+## Universal crash policy
 
-`0x27390fe7ae676fbfdb632e61cd4019996b07892c`
-
-Minimum: **1 DEAD PIXELS**
-
-## Access sequence
+The following caps are applied before the final score is shown. Shorter-timeframe flash crashes can impose even stricter caps.
 
 ```text
-LOAD PORTAL
-  ↓
-NO WALLET REQUEST
-  ↓
-USER CLICKS CONNECT WALLET
-  ↓
-eth_requestAccounts
-  ↓
-/api/holder?wallet=0x...
-  ↓
-SERVER READ-ONLY NFT balanceOf() ON CHAIN 4663
-  ↓
-BALANCE >= 1 → UNLOCK PORTAL
-BALANCE = 0  → KEEP PORTAL LOCKED
+24H <= -30%   max 72
+24H <= -45%   max 60
+24H <= -60%   max 48
+24H <= -75%   max 36
+24H <= -85%   max 26
+24H <= -90%   max 18
+24H <= -95%   max 10
 ```
 
-No seed phrase/private key is ever requested. No message signature, approval, or transaction is part of this holder verification flow.
+Example: a token down ~96.7% in 24H with ~$5K liquidity and ~169x Volume/Liquidity can no longer show a score around 70. It is classified **CRITICAL**, Alpha is capped at 10, anomaly/risk are elevated, and it is routed to **RISK RADAR** instead of normal Trending.
 
-## Existing V3.7.4 features preserved
+## GLITCH ALPHA score components
 
-- GLITCH ALPHA universal token intelligence
-- pair-aware rankings and canonical score
-- qualified Trending / Gainers / Volume
-- Just Born + historical token discovery
-- HOLDER_MAP and holder intelligence
+```text
+Momentum      14%
+Liquidity     18%
+Activity      13%
+Flow          10%
+Maturity      10%
+Structure     10%
+Price Survival 25%
+```
+
+Activity itself uses a turnover-quality curve. Extremely high churn no longer receives the same treatment as healthy activity.
+
+## Security-safe holder gate preserved
+
+- No provider request on page load.
+- User must manually press **CONNECT WALLET**.
+- Holder verification is a server-side read-only `balanceOf()` check on Robinhood Chain.
+- No signature, approval, transaction or automatic network switch is required during holder verification.
+- Full Portal UI remains restricted to wallets holding at least 1 DEAD PIXELS NFT.
+
+DEAD PIXELS NFT contract:
+`0x27390fe7ae676fbfdb632e61cd4019996b07892c`
+
+## Other existing features preserved
+
+- Universal token discovery / Just Born / historical search
+- Pair-aware market identity and canonical list/detail score
+- Holder count + HOLDER_MAP
 - Liquidity lock intelligence
 - DEX Screener paid / boosts / ads intelligence
-- larger readability typography
-- 0% protocol fee GLITCH Router
+- Same-origin SSRF-safe raster token image proxy
+- Stock Engine, Portfolio, Orders and GLITCH Router
+- Non-custodial routing with 0% protocol fee
 
 ## Environment variables
 
-Keep the existing variables. No new key is required:
+No new key is required.
 
 ```text
 RH_RPC_URL=https://rpc.mainnet.chain.robinhood.com/
@@ -64,19 +80,13 @@ LIFI_API_KEY=your_existing_key_if_used
 ## Simple deployment
 
 1. Extract this ZIP.
-2. Replace the current Vercel Portal project files with the extracted files.
-3. Keep the existing Vercel environment variables.
+2. Replace the files in the current Vercel Portal project with the extracted files.
+3. Keep the existing environment variables unchanged.
 4. Deploy / Redeploy.
-5. Open `/api/health` and confirm **DEAD PIXELS PORTAL V3.7.6** and `securitySafeAccess.manualConnectOnly: true`.
-6. Open the Portal in a fresh/private browser window. **No wallet popup should appear by itself.**
-7. Press **CONNECT WALLET** manually. This should be the first wallet permission request.
-8. A holder wallet should unlock the Portal; a non-holder wallet should remain on the access screen.
-9. During access verification there should be **no network-switch, signature, approval, or transaction prompt**.
+5. Open `/api/health` and confirm **DEAD PIXELS PORTAL V3.7.7** and `scoreModel: V3.7.7_INTELLIGENT_MARKET_GUARD`.
+6. Connect a DEAD PIXELS holder wallet and open **02 ALPHA**.
+7. Check **Trending** and **Risk Radar**. Distressed markets should no longer rank as normal high-alpha opportunities.
 
 ## Important
 
-This build reduces unnecessary wallet/security signals but cannot guarantee how MetaMask or any third-party threat-intelligence provider classifies a domain. If a domain warning is already active, a clean redeploy does not itself guarantee immediate removal; the classification provider may need to rescan/review the site.
-
-## V3.7.6 token-logo fix
-
-External token and Stock Token logos are now requested through `/api/token-image` so the strict `img-src 'self' data:` CSP can remain unchanged. The proxy only accepts HTTPS, rejects private/local destinations, validates DNS and redirects, enforces a 1.5 MB limit, and only returns raster image formats detected from file signatures. SVG/HTML are rejected. If an image is unavailable, the UI shows token initials instead of a broken-image icon.
+GLITCH ALPHA is decision-support intelligence. Risk, anomaly, holder, lock and score signals cannot guarantee that a token is safe, profitable, liquid or sellable. When evidence is unavailable the Portal should prefer UNKNOWN / reduced confidence over inventing a positive claim.
